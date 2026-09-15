@@ -63,7 +63,7 @@
       <p class="hero-lead">はじめての方も、常連さんも。<br class="sp-only">お子様連れも学生さんも、みんなにこにこ笑顔になれる<br class="sp-only">アットホームな美容室です。</p>
       <div class="hero-actions">
         <a href="#contact" class="btn btn-primary">ご予約はこちら</a>
-        <a href="tel:0000000000" class="btn btn-outline">📞 お電話で予約</a>
+        <a href="tel:0000000000" class="btn btn-outline" id="heroCallBtn">📞 お電話で予約</a>
       </div>
     </div>
     <div class="hero-wave" aria-hidden="true">
@@ -188,8 +188,9 @@
       <p class="section-eyebrow">STAFF</p>
       <h2 class="section-title">スタッフ紹介</h2>
       <p class="section-lead">にこまるのスタッフをご紹介します。(お名前・コメントは編集してご利用ください)</p>
+      <p class="sync-note" id="staffSyncNote"></p>
 
-      <div class="staff-grid reveal-group">
+      <div class="staff-grid reveal-group" id="staffGrid">
         <div class="staff-card reveal">
           <img src="assets/img/logo.png" alt="スタッフ にこ" class="staff-avatar">
           <h3>にこ <span>店長 / スタイリスト</span></h3>
@@ -232,25 +233,27 @@
     <div class="container">
       <p class="section-eyebrow">ACCESS</p>
       <h2 class="section-title">アクセス・営業時間</h2>
+      <p class="sync-note" id="infoSyncNote"></p>
 
       <div class="access-wrap">
         <div class="access-info reveal">
           <table class="info-table">
-            <tr><th>店名</th><td>Hair &amp; Beauty Salon にこまる美容室</td></tr>
-            <tr><th>住所</th><td>〒000-0000<br>〇〇県〇〇市〇〇町0-0-0</td></tr>
-            <tr><th>電話番号</th><td><a href="tel:0000000000">000-000-0000</a></td></tr>
-            <tr><th>営業時間</th><td>10:00 〜 19:00(最終受付 18:00)</td></tr>
-            <tr><th>定休日</th><td>毎週月曜日・第3火曜日</td></tr>
-            <tr><th>駐車場</th><td>店舗前に2台分完備</td></tr>
+            <tr><th>店名</th><td id="infoStoreName">Hair &amp; Beauty Salon にこまる美容室</td></tr>
+            <tr><th>住所</th><td id="infoAddress">〒000-0000<br>〇〇県〇〇市〇〇町0-0-0</td></tr>
+            <tr><th>電話番号</th><td><a href="tel:0000000000" id="infoPhone">000-000-0000</a></td></tr>
+            <tr><th>営業時間</th><td id="infoHours">10:00 〜 19:00(最終受付 18:00)</td></tr>
+            <tr><th>定休日</th><td id="infoHolidays">毎週月曜日・第3火曜日</td></tr>
+            <tr><th>駐車場</th><td id="infoParking">店舗前に2台分完備</td></tr>
           </table>
           <div class="access-actions">
-            <a href="tel:0000000000" class="btn btn-primary">📞 電話する</a>
+            <a href="tel:0000000000" class="btn btn-primary" id="accessCallBtn">📞 電話する</a>
             <a href="#contact" class="btn btn-outline">ご予約フォームへ</a>
           </div>
         </div>
         <div class="access-map reveal">
           <iframe
             title="にこまる美容室 地図"
+            id="accessMapFrame"
             src="https://www.google.com/maps?q=%E9%A7%85&output=embed"
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade">
@@ -269,22 +272,22 @@
       <p class="section-lead">お電話・LINE・お問い合わせフォームからご予約いただけます。<br class="sp-only">お気軽にご連絡ください。</p>
 
       <div class="contact-grid reveal-group">
-        <a href="tel:0000000000" class="contact-card reveal">
+        <a href="tel:0000000000" class="contact-card reveal" id="contactPhoneLink">
           <div class="contact-icon">📞</div>
           <h3>お電話でご予約</h3>
-          <p>000-000-0000</p>
-          <span class="contact-sub">受付時間 10:00〜18:30</span>
+          <p id="contactPhoneNumber">000-000-0000</p>
+          <span class="contact-sub" id="contactPhoneHours">受付時間 10:00〜18:30</span>
         </a>
-        <a href="#" class="contact-card reveal">
+        <a href="#" class="contact-card reveal" id="contactLineLink">
           <div class="contact-icon">💬</div>
           <h3>LINEでご予約</h3>
-          <p>@nikomaru-salon</p>
-          <span class="contact-sub">24時間受付・LINE ID差し替えてください</span>
+          <p id="contactLineId">@nikomaru-salon</p>
+          <span class="contact-sub" id="contactLineHours">24時間受付・LINE ID差し替えてください</span>
         </a>
-        <a href="#" class="contact-card reveal">
+        <a href="#" class="contact-card reveal" id="contactInstagramLink">
           <div class="contact-icon">📷</div>
           <h3>Instagram</h3>
-          <p>@nikomaru_biyoushitsu</p>
+          <p id="contactInstagramId">@nikomaru_biyoushitsu</p>
           <span class="contact-sub">最新のスタイル・お知らせを配信中</span>
         </a>
       </div>

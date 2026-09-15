@@ -9,6 +9,8 @@
   // ==========================================================================
   var MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/1RImllNJFktSgC_on3u8TwsrB2Ml9VY_REjnZurUeWXQ/export?format=csv&gid=0';
   var SHOP_CSV_URL = 'https://docs.google.com/spreadsheets/d/1tUm9vcwxFQcmePR6c52iKO0d6asNkS28m19FpAoTXGs/export?format=csv&gid=0';
+  var STORE_INFO_CSV_URL = 'https://docs.google.com/spreadsheets/d/18XFhut26DxMbK4YUnTcoa2FV4pW5U-bembK3WdokPdo/export?format=csv&gid=0';
+  var STAFF_CSV_URL = 'https://docs.google.com/spreadsheets/d/1tT4duASTJzG3G8KtR0s5cxJbaK10KS79YgGdAB428K8/export?format=csv&gid=0';
 
   var MENU_ICONS = {
     'カット': '✂️',
@@ -131,6 +133,80 @@
     showSyncNote('shopSyncNote');
   }
 
+  // 店舗情報(住所・電話・営業時間など)をスプレッドシートの内容で反映
+  function renderStoreInfo(rows) {
+    if (!rows.length) { return; }
+    var info = {};
+    rows.forEach(function (r) { info[r.key] = r.value; });
+
+    function setText(id, value) {
+      var el = document.getElementById(id);
+      if (el && value) { el.textContent = value; }
+    }
+
+    setText('infoStoreName', info['店名']);
+
+    if (info['郵便番号'] || info['住所']) {
+      var addrEl = document.getElementById('infoAddress');
+      if (addrEl) {
+        addrEl.innerHTML = escapeHTML(info['郵便番号'] || '') + '<br>' + escapeHTML(info['住所'] || '');
+      }
+    }
+
+    setText('infoHours', info['営業時間']);
+    setText('infoHolidays', info['定休日']);
+    setText('infoParking', info['駐車場']);
+
+    if (info['電話番号']) {
+      var telHref = 'tel:' + info['電話番号'].replace(/[^0-9]/g, '');
+      ['infoPhone', 'heroCallBtn', 'accessCallBtn', 'contactPhoneLink'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) { el.setAttribute('href', telHref); }
+      });
+      setText('infoPhone', info['電話番号']);
+      setText('contactPhoneNumber', info['電話番号']);
+    }
+    setText('contactPhoneHours', info['電話受付時間'] ? ('受付時間 ' + info['電話受付時間']) : '');
+
+    setText('contactLineId', info['LINE_ID']);
+    setText('contactLineHours', info['LINE_受付時間']);
+
+    if (info['Instagram']) {
+      setText('contactInstagramId', info['Instagram']);
+      var igLink = document.getElementById('contactInstagramLink');
+      if (igLink) {
+        igLink.setAttribute('href', 'https://www.instagram.com/' + info['Instagram'].replace(/^@/, '') + '/');
+      }
+    }
+
+    if (info['地図検索キーワード'] || info['住所']) {
+      var mapFrame = document.getElementById('accessMapFrame');
+      if (mapFrame) {
+        var q = info['地図検索キーワード'] || info['住所'];
+        mapFrame.setAttribute('src', 'https://www.google.com/maps?q=' + encodeURIComponent(q) + '&output=embed');
+      }
+    }
+
+    showSyncNote('infoSyncNote');
+  }
+
+  // スタッフ紹介セクションをスプレッドシートの内容で描画
+  function renderStaff(rows) {
+    var grid = document.getElementById('staffGrid');
+    if (!grid || !rows.length) { return; }
+
+    var html = rows.map(function (member) {
+      var photo = member.photo_url ? escapeHTML(member.photo_url) : 'assets/img/logo.png';
+      return '<div class="staff-card reveal in-view">' +
+        '<img src="' + photo + '" alt="スタッフ ' + escapeHTML(member.name) + '" class="staff-avatar">' +
+        '<h3>' + escapeHTML(member.name) + ' <span>' + escapeHTML(member.role || '') + '</span></h3>' +
+        '<p>「' + escapeHTML(member.comment || '') + '」</p></div>';
+    }).join('');
+
+    grid.innerHTML = html;
+    showSyncNote('staffSyncNote');
+  }
+
   function escapeHTML(str) {
     return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -142,6 +218,12 @@
   });
   fetchCSV(SHOP_CSV_URL).then(renderShop).catch(function (err) {
     console.warn('物販のスプレッドシート読み込みに失敗しました(仮の内容を表示中):', err);
+  });
+  fetchCSV(STORE_INFO_CSV_URL).then(renderStoreInfo).catch(function (err) {
+    console.warn('店舗情報のスプレッドシート読み込みに失敗しました(仮の内容を表示中):', err);
+  });
+  fetchCSV(STAFF_CSV_URL).then(renderStaff).catch(function (err) {
+    console.warn('スタッフ情報のスプレッドシート読み込みに失敗しました(仮の内容を表示中):', err);
   });
 
   // モバイルナビゲーションの開閉
