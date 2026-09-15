@@ -1,0 +1,99 @@
+/* ==========================================================================
+   にこまる美容室 - 予約管理画面 専用スタイル
+   ========================================================================== */
+
+.admin-section{ padding-top: 48px; }
+
+.login-box{
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.admin-header-row{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.admin-header-row .section-title{ margin-bottom: 0; text-align: left; }
+
+.admin-filter{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.filter-btn{
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid rgba(74,59,42,0.2);
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: background .15s ease, color .15s ease;
+}
+.filter-btn.is-active{
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+}
+
+.admin-empty{
+  text-align: center;
+  color: var(--text);
+  opacity: .7;
+  padding: 48px 0;
+}
+
+.admin-list{
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.booking-card{
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  box-shadow: 0 8px 24px rgba(43,36,32,0.06);
+  border-left: 6px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.booking-card.status-pending{ border-left-color: var(--yellow); }
+.booking-card.status-confirmed{ border-left-color: var(--red); }
+.booking-card.status-completed{ border-left-color: #8fb98f; }
+.booking-card.status-cancelled{ border-left-color: #b0a99f; opacity: .65; }
+
+.booking-card-main h3{ font-size: 16px; margin: 6px 0; color: var(--charcoal); }
+.booking-card-main p{ font-size: 13.5px; margin: 4px 0; }
+.booking-card-main a{ color: var(--red); font-weight: 700; }
+.booking-notes{ opacity: .8; }
+
+.booking-status-badge{
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--charcoal);
+  background: var(--cream);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+
+.booking-card-actions{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px){
+  .booking-card{ flex-direction: column; align-items: stretch; }
+}

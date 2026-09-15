@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ネット予約 | Hair &amp; Beauty Salon にこまる美容室</title>
+<meta name="description" content="にこまる美容室のネット予約フォームです。ご希望の日時・メニューをご入力のうえ送信してください。">
+<meta name="robots" content="noindex">
+<link rel="icon" href="assets/img/logo.png" type="image/png">
+<link rel="apple-touch-icon" href="assets/img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="index.html">
+      <img src="assets/img/logo.png" alt="にこまる美容室 ロゴ" class="brand-logo">
+      <span class="brand-text">
+        <span class="brand-text-en">Hair &amp; Beauty Salon</span>
+        <span class="brand-text-ja">にこまる美容室</span>
+      </span>
+    </a>
+    <nav class="nav">
+      <ul>
+        <li><a href="index.html">トップページへ戻る</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="section form-page">
+    <div class="container container-narrow">
+      <p class="section-eyebrow">ONLINE BOOKING</p>
+      <h1 class="section-title">ネット予約</h1>
+      <p class="section-lead">ご希望の日時・メニューをご入力のうえ送信してください。<br class="sp-only">
+        こちらは「予約リクエスト」の受付です。空き状況を確認のうえ、店舗より確定のご連絡をいたします。</p>
+
+      <p class="form-config-warning" id="configWarning" hidden>
+        ⚠️ ネット予約フォームは現在準備中です。恐れ入りますが、お電話またはLINEでご予約ください。
+      </p>
+
+      <form class="booking-form" id="bookingForm">
+        <div class="form-row">
+          <label for="name">お名前 <span class="required">必須</span></label>
+          <input type="text" id="name" name="name" maxlength="50" required autocomplete="name">
+        </div>
+
+        <div class="form-row">
+          <label for="phone">電話番号 <span class="required">必須</span></label>
+          <input type="tel" id="phone" name="phone" maxlength="20" required autocomplete="tel" placeholder="000-000-0000">
+        </div>
+
+        <div class="form-row form-row-split">
+          <div>
+            <label for="date">ご希望日 <span class="required">必須</span></label>
+            <input type="date" id="date" name="date" required>
+          </div>
+          <div>
+            <label for="time">ご希望時間 <span class="required">必須</span></label>
+            <input type="time" id="time" name="time" min="10:00" max="18:00" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="menu">ご希望メニュー <span class="required">必須</span></label>
+          <select id="menu" name="menu" required>
+            <option value="" disabled selected>選択してください</option>
+            <option value="カット">カット</option>
+            <option value="カラー">カラー</option>
+            <option value="パーマ">パーマ</option>
+            <option value="トリートメント">トリートメント</option>
+            <option value="ヘッドスパ">ヘッドスパ</option>
+            <option value="その他(備考欄にご記入ください)">その他(備考欄にご記入ください)</option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label for="notes">備考(任意)</label>
+          <textarea id="notes" name="notes" maxlength="500" rows="4" placeholder="ご要望などございましたらご記入ください"></textarea>
+        </div>
+
+        <!-- スパム対策用のダミー項目(人間には見えません。入力があった場合は送信しません) -->
+        <div class="form-honeypot" aria-hidden="true">
+          <label for="website">website</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <p class="form-message" id="formMessage" role="status"></p>
+
+        <button type="submit" class="btn btn-primary" id="submitBtn">予約リクエストを送信する</button>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <a class="brand brand-footer" href="index.html">
+      <img src="assets/img/logo.png" alt="にこまる美容室 ロゴ" class="brand-logo">
+      <span class="brand-text">
+        <span class="brand-text-en">Hair &amp; Beauty Salon</span>
+        <span class="brand-text-ja">にこまる美容室</span>
+      </span>
+    </a>
+    <p class="copyright">&copy; <span id="year"></span> Hair &amp; Beauty Salon にこまる美容室</p>
+  </div>
+</footer>
+
+<script type="module" src="js/yoyaku.js"></script>
+</body>
+</html>

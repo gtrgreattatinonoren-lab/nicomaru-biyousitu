@@ -450,7 +450,7 @@ p{ margin: 0; line-height: 1.8; }
 /* contact */
 .contact-grid{
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 24px;
 }
 .contact-card{
@@ -463,6 +463,13 @@ p{ margin: 0; line-height: 1.8; }
   transition: transform .25s ease, box-shadow .25s ease;
 }
 .contact-card:hover{ transform: translateY(-6px); box-shadow: var(--shadow); }
+.contact-card-highlight{
+  background: linear-gradient(160deg, var(--red) 0%, var(--red-dark) 100%);
+  color: #fff;
+}
+.contact-card-highlight h3,
+.contact-card-highlight p{ color: #fff; }
+.contact-card-highlight .contact-sub{ color: rgba(255,255,255,0.85); }
 .contact-icon{ font-size: 30px; margin-bottom: 12px; }
 .contact-card h3{ font-size: 16px; color: var(--charcoal); margin-bottom: 8px; }
 .contact-card p{ font-weight: 700; color: var(--red); margin-bottom: 6px; }
@@ -508,6 +515,104 @@ p{ margin: 0; line-height: 1.8; }
   z-index: 90;
 }
 .to-top.visible{ opacity: 1; visibility: visible; transform: translateY(0); }
+
+/* ==========================================================================
+   フォーム共通(予約フォーム・管理画面ログイン)
+   ========================================================================== */
+.container-narrow{ max-width: 640px; }
+.form-page{ padding-top: 56px; }
+
+.form-config-warning{
+  background: #fff3e0;
+  color: #a15c00;
+  border: 1px solid #f4c98a;
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.booking-form{
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 32px 28px;
+  box-shadow: 0 8px 24px rgba(43,36,32,0.06);
+}
+
+.form-row{ margin-bottom: 20px; }
+.form-row-split{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-row label{
+  display: block;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--charcoal);
+  margin-bottom: 8px;
+}
+.form-row .required{
+  display: inline-block;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #fff;
+  background: var(--red);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+.form-row input[type="text"],
+.form-row input[type="tel"],
+.form-row input[type="email"],
+.form-row input[type="password"],
+.form-row input[type="date"],
+.form-row input[type="time"],
+.form-row select,
+.form-row textarea{
+  width: 100%;
+  font-family: var(--font);
+  font-size: 15px;
+  color: var(--text);
+  background: var(--cream-light);
+  border: 1px solid rgba(74,59,42,0.2);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+.form-row textarea{ resize: vertical; }
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus{
+  outline: 2px solid var(--red);
+  outline-offset: 1px;
+}
+
+.form-honeypot{
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.form-message{
+  min-height: 1.4em;
+  font-size: 13.5px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+.form-message-success{ color: #2a7a3b; }
+.form-message-error{ color: var(--red); }
+
+.btn-sm{ padding: 9px 18px; font-size: 13px; }
+.btn-danger{ color: var(--red-dark); border-color: var(--red-dark); }
+.btn-danger:hover{ background: #fdecea; }
+
+@media (max-width: 560px){
+  .form-row-split{ grid-template-columns: 1fr; }
+  .booking-form{ padding: 24px 18px; }
+}
 
 /* ==========================================================================
    Responsive

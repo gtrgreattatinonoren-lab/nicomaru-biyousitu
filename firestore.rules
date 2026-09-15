@@ -1,0 +1,54 @@
+rules_version = '2';
+
+// ==========================================================================
+// にこまる美容室 予約システム Firestoreセキュリティルール
+// ==========================================================================
+// Firebaseコンソール →「Firestore Database」→「ルール」タブに、
+// このファイルの中身をそのまま貼り付けて「公開」してください。
+//
+// 【このルールが守っていること】
+// - お客様(未ログイン)は、予約を新規作成することだけができます。
+//   他の人の予約を読んだり、一覧で見たりすることはできません。
+// - 予約の閲覧・確認(ステータス変更)・削除は、ログインしたスタッフのみ可能です。
+// - 送信できるデータの形(項目名・文字数・型)を厳密にチェックし、
+//   不正なデータ(余計な項目・異常に長い文字列など)を拒否します。
+// - status(予約の状態)は新規作成時に必ず「pending(受付待ち)」で固定され、
+//   お客様が自分で「confirmed(確定)」などに書き換えることはできません。
+// - createdAt(送信日時)はサーバー側の時刻(改ざん不可)のみ許可します。
+// ==========================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /bookings/{bookingId} {
+
+      // お客様がネット予約フォームから新規予約を送信する場合(ログイン不要)
+      allow create: if isValidNewBooking(request.resource.data);
+
+      // 予約の閲覧(get/list)・確認・削除は、ログインしたスタッフのみ
+      allow read, update, delete: if isStaff();
+    }
+
+    // これ以外のコレクションはすべて拒否(念のための保険)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isStaff() {
+      return request.auth != null;
+    }
+
+    function isValidNewBooking(data) {
+      return data.keys().hasOnly(['name', 'phone', 'date', 'time', 'menu', 'notes', 'status', 'createdAt'])
+        && data.keys().hasAll(['name', 'phone', 'date', 'time', 'menu', 'status', 'createdAt'])
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 50
+        && data.phone is string && data.phone.size() > 0 && data.phone.size() <= 20
+        && data.date is string && data.date.size() == 10
+        && data.time is string && data.time.size() == 5
+        && data.menu is string && data.menu.size() <= 100
+        && (!('notes' in data) || (data.notes is string && data.notes.size() <= 500))
+        && data.status == 'pending'
+        && data.createdAt == request.time;
+    }
+  }
+}
