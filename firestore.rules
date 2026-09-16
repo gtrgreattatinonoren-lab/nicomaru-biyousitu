@@ -15,6 +15,8 @@ rules_version = '2';
 // - status(予約の状態)は新規作成時に必ず「pending(受付待ち)」で固定され、
 //   お客様が自分で「confirmed(確定)」などに書き換えることはできません。
 // - createdAt(送信日時)はサーバー側の時刻(改ざん不可)のみ許可します。
+// - スタッフの勤務シフト(shifts)は、個人情報を含まないため誰でも閲覧できます
+//   (予約フォームが空き状況を判定するために必要)。追加・変更・削除はスタッフのみ。
 // ==========================================================================
 
 service cloud.firestore {
@@ -29,6 +31,17 @@ service cloud.firestore {
       allow read, update, delete: if isStaff();
     }
 
+    match /shifts/{shiftId} {
+
+      // 勤務時間は個人情報ではないため、閲覧は誰でも可能
+      // (ネット予約フォームが「空いている日時」を判定するために必要)
+      allow read: if true;
+
+      // 追加・変更・削除は、ログインしたスタッフのみ
+      allow create, update: if isStaff() && isValidShift(request.resource.data);
+      allow delete: if isStaff();
+    }
+
     // これ以外のコレクションはすべて拒否(念のための保険)
     match /{document=**} {
       allow read, write: if false;
@@ -36,6 +49,19 @@ service cloud.firestore {
 
     function isStaff() {
       return request.auth != null;
+    }
+
+    function isValidShift(data) {
+      return data.keys().hasOnly(['staffName', 'type', 'weekday', 'date', 'start', 'end', 'working', 'updatedAt'])
+        && data.keys().hasAll(['staffName', 'type', 'working', 'updatedAt'])
+        && data.staffName is string && data.staffName.size() > 0 && data.staffName.size() <= 50
+        && (data.type == 'weekly' || data.type == 'exception')
+        && data.working is bool
+        && (!('weekday' in data) || (data.weekday is string && data.weekday.size() <= 4))
+        && (!('date' in data) || (data.date is string && data.date.size() == 10))
+        && (!('start' in data) || (data.start is string && data.start.size() == 5))
+        && (!('end' in data) || (data.end is string && data.end.size() == 5))
+        && data.updatedAt == request.time;
     }
 
     function isValidNewBooking(data) {

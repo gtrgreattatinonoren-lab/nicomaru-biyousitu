@@ -55,8 +55,24 @@ export function formatDateKey(date) {
   return y + '-' + (m.length < 2 ? '0' + m : m) + '-' + (d.length < 2 ? '0' + d : d);
 }
 
+// working値が「出勤」を表すかどうかを判定します(Firestoreのbool、
+// スプレッドシート由来の'TRUE'文字列のどちらにも対応)。
+export function isWorkingValue(v) {
+  if (v === true) { return true; }
+  return String(v).toUpperCase() === 'TRUE';
+}
+
+// スタッフのシフトドキュメントID(Firestore)を組み立てます。
+// 同じ内容で再保存したときに重複が増えないよう、決まった形式にしています。
+export function buildWeeklyShiftId(staffName, weekday) {
+  return staffName + '__weekly__' + weekday;
+}
+export function buildExceptionShiftId(staffName, dateKey) {
+  return staffName + '__exception__' + dateKey;
+}
+
 // 指定スタッフの、指定日の勤務時間を返します(休みの場合は null)。
-// shiftRows: スタッフシフト用シートの内容(スプレッドシートの行そのまま)
+// shiftRows: シフトの一覧(Firestoreのshiftsコレクションのドキュメントの配列)
 //   - type: 'weekly'(曜日ごとの基本パターン) または 'exception'(個別の休み・特別出勤)
 //   - exception は weekly より優先されます
 export function getStaffShiftForDate(shiftRows, staffName, date) {
@@ -64,18 +80,18 @@ export function getStaffShiftForDate(shiftRows, staffName, date) {
   var weekday = WEEKDAY_JP[date.getDay()];
 
   var exception = (shiftRows || []).filter(function (r) {
-    return r.staff_name === staffName && r.type === 'exception' && r.date === dateKey;
+    return r.staffName === staffName && r.type === 'exception' && r.date === dateKey;
   })[0];
   if (exception) {
-    if (String(exception.working).toUpperCase() !== 'TRUE') { return null; }
+    if (!isWorkingValue(exception.working)) { return null; }
     if (!exception.start || !exception.end) { return null; }
     return { start: exception.start, end: exception.end };
   }
 
   var weekly = (shiftRows || []).filter(function (r) {
-    return r.staff_name === staffName && r.type === 'weekly' && r.weekday === weekday;
+    return r.staffName === staffName && r.type === 'weekly' && r.weekday === weekday;
   })[0];
-  if (!weekly || String(weekly.working).toUpperCase() !== 'TRUE') { return null; }
+  if (!weekly || !isWorkingValue(weekly.working)) { return null; }
   if (!weekly.start || !weekly.end) { return null; }
   return { start: weekly.start, end: weekly.end };
 }

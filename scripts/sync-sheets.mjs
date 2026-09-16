@@ -19,8 +19,9 @@ const SHEETS = {
   'shop.json': 'https://docs.google.com/spreadsheets/d/1tUm9vcwxFQcmePR6c52iKO0d6asNkS28m19FpAoTXGs/gviz/tq?tqx=out:csv&gid=0',
   'store-info.json': 'https://docs.google.com/spreadsheets/d/18XFhut26DxMbK4YUnTcoa2FV4pW5U-bembK3WdokPdo/gviz/tq?tqx=out:csv&gid=0',
   'staff.json': 'https://docs.google.com/spreadsheets/d/1tT4duASTJzG3G8KtR0s5cxJbaK10KS79YgGdAB428K8/gviz/tq?tqx=out:csv&gid=0',
-  'site-text.json': 'https://docs.google.com/spreadsheets/d/1IjNnNu_x-DFAX7rIdQ1b1vLGnSqPq-KTk7DQKBHbFDE/gviz/tq?tqx=out:csv&gid=0',
-  'staff-shifts.json': 'https://docs.google.com/spreadsheets/d/1n4AGv4OEKD8I4kMcZ37ewEDZCupjiA55ZsdSaPmUbv4/gviz/tq?tqx=out:csv&gid=0'
+  'site-text.json': 'https://docs.google.com/spreadsheets/d/1IjNnNu_x-DFAX7rIdQ1b1vLGnSqPq-KTk7DQKBHbFDE/gviz/tq?tqx=out:csv&gid=0'
+  // スタッフのシフトはスプレッドシートではなく、リアルタイム反映のため
+  // Firestore(shiftsコレクション、/admin/shifts.html で編集)で管理しています。
 };
 
 // CSVテキストを配列に変換(ダブルクォート・カンマ・改行に対応)

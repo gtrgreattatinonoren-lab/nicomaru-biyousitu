@@ -221,3 +221,31 @@
 @media (max-width: 640px){
   .calendar-nav{ justify-content: center; }
 }
+
+/* ---------- シフト管理 ---------- */
+.shift-form{ margin-bottom: 32px; }
+.shift-list-title{
+  font-size: 16px;
+  color: var(--charcoal);
+  margin: 24px 0 12px;
+}
+
+.shift-item{
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 14px 20px;
+  box-shadow: 0 6px 18px rgba(43,36,32,0.05);
+  border-left: 6px solid #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.shift-item.is-working{ border-left-color: var(--red); }
+.shift-item.is-off{ border-left-color: #b0a99f; opacity: .75; }
+.shift-item-label{ font-weight: 700; color: var(--charcoal); font-size: 14px; }
+.shift-item-time{ font-size: 13px; color: var(--text); }
+.shift-item-actions{ display: flex; gap: 8px; }
