@@ -21,21 +21,31 @@ data/menu.json                     メニュー・料金(スプレッドシー�
 data/shop.json                     物販(同上)
 data/store-info.json               店舗情報(同上)
 data/staff.json                    スタッフ紹介(同上)
+data/site-text.json                サイト内の見出し・説明文(同上)
 scripts/sync-sheets.mjs            スプレッドシート→data/*.json への変換スクリプト
 .github/workflows/sync-sheets.yml  上記を定期的に自動実行するGitHub Actions設定
 assets/img/logo.png                ロゴ画像
 ```
 
-## メニュー・料金・物販・店舗情報・スタッフ紹介はGoogleスプレッドシートと自動連携しています
+## メニュー・料金・物販・店舗情報・スタッフ紹介・サイト文言はGoogleスプレッドシートと自動連携しています
 
-このサイトの「メニュー・料金」「物販」「アクセス・営業時間」「ご予約・お問い合わせ」「スタッフ紹介」セクションは、以下の4つのGoogleスプレッドシートの内容を表示します。
+このサイトの「メニュー・料金」「物販」「アクセス・営業時間」「ご予約・お問い合わせ」「スタッフ紹介」、そして各セクションの見出し・説明文は、以下の5つのGoogleスプレッドシートの内容を表示します。
 
 - メニュー用シート: https://docs.google.com/spreadsheets/d/1RImllNJFktSgC_on3u8TwsrB2Ml9VY_REjnZurUeWXQ/edit
 - 物販用シート: https://docs.google.com/spreadsheets/d/1tUm9vcwxFQcmePR6c52iKO0d6asNkS28m19FpAoTXGs/edit
 - 店舗情報用シート: https://docs.google.com/spreadsheets/d/18XFhut26DxMbK4YUnTcoa2FV4pW5U-bembK3WdokPdo/edit
 - スタッフ紹介用シート: https://docs.google.com/spreadsheets/d/1tT4duASTJzG3G8KtR0s5cxJbaK10KS79YgGdAB428K8/edit
+- **サイト文言用シート(新規)**: https://docs.google.com/spreadsheets/d/1IjNnNu_x-DFAX7rIdQ1b1vLGnSqPq-KTk7DQKBHbFDE/edit
 
-すでにお使いのGoogleアカウントに作成済みです。共有設定(リンクを知っている全員が閲覧者)も設定済みなので、**内容の入力だけ**すればOKです。
+すでにお使いのGoogleアカウントに作成済みです。上4つは共有設定も済んでいますが、**「サイト文言用シート」だけ、以下の共有設定を1回行ってください**(新しく作ったばかりのため)。
+
+1. 上のリンクからシートを開く
+2. 右上の「共有」ボタンをクリック
+3. 「全般的なアクセス」を「制限付き」→「**リンクを知っている全員**」に変更
+4. 権限は「**閲覧者**」のままでOK
+5. 「完了」をクリック
+
+これを行わないと、そのシートだけ反映されません(他のシートやサイトの表示には影響しません)。設定後は「Actions」タブから手動実行(下記)するとすぐに反映できます。
 
 ### 仕組みについて(なぜ反映に少し時間がかかるか)
 
@@ -106,6 +116,22 @@ assets/img/logo.png                ロゴ画像
 | photo_url | 写真のURL(空欄ならロゴ画像を仮表示) | |
 
 行を追加・削除・並べ替えすれば、そのままサイトに反映されます(メニューはカテゴリ名を新しく追加すると自動的に新しいブロックとして表示され、アイコンは✨が付きます。スタッフも行の追加・削除がそのまま人数に反映されます)。
+
+**サイト文言用シート**の列(`key`列は決まった名前、`value`列だけ書き換えてください。行の削除・並べ替えはしないでください):
+
+| key | どこに表示されるか | 現在の内容 |
+| --- | --- | --- |
+| hero_title | トップの大見出し | 笑顔咲く、にこまるの時間。 |
+| hero_lead | トップの説明文 | はじめての方も、常連さんも。... |
+| concept_lead | 「コンセプト」の説明文 | 「今日も来てよかった」と、... |
+| concept_card1_title 〜 concept_card4_title | コンセプトのカード見出し(4枚) | アットホームな雰囲気 など |
+| concept_card1_text 〜 concept_card4_text | コンセプトのカード説明文(4枚) | スタッフ一同、笑顔で... など |
+| menu_lead | 「メニュー・料金」の説明文 | 表示価格はサンプルです。... |
+| menu_note | メニュー欄下部の注意書き | ※ 上記は一例です。... |
+| shop_lead | 「物販」の説明文 | サロンオリジナル商品・... |
+| staff_lead | 「スタッフ紹介」の説明文 | にこまるのスタッフをご紹介します。 |
+| gallery_lead | 「ギャラリー」の説明文 | 店内やヘアスタイルの写真は... |
+| contact_lead | 「ご予約・お問い合わせ」の説明文 | お電話・LINE・お問い合わせ... |
 
 もし何らかの理由で自動反映が止まってしまった場合は、`data/*.json` にもともと書かれている(最後に成功した)内容がそのまま表示されるので、サイトが壊れて見えることはありません。
 

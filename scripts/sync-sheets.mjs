@@ -18,7 +18,8 @@ const SHEETS = {
   'menu.json': 'https://docs.google.com/spreadsheets/d/1RImllNJFktSgC_on3u8TwsrB2Ml9VY_REjnZurUeWXQ/gviz/tq?tqx=out:csv&gid=0',
   'shop.json': 'https://docs.google.com/spreadsheets/d/1tUm9vcwxFQcmePR6c52iKO0d6asNkS28m19FpAoTXGs/gviz/tq?tqx=out:csv&gid=0',
   'store-info.json': 'https://docs.google.com/spreadsheets/d/18XFhut26DxMbK4YUnTcoa2FV4pW5U-bembK3WdokPdo/gviz/tq?tqx=out:csv&gid=0',
-  'staff.json': 'https://docs.google.com/spreadsheets/d/1tT4duASTJzG3G8KtR0s5cxJbaK10KS79YgGdAB428K8/gviz/tq?tqx=out:csv&gid=0'
+  'staff.json': 'https://docs.google.com/spreadsheets/d/1tT4duASTJzG3G8KtR0s5cxJbaK10KS79YgGdAB428K8/gviz/tq?tqx=out:csv&gid=0',
+  'site-text.json': 'https://docs.google.com/spreadsheets/d/1IjNnNu_x-DFAX7rIdQ1b1vLGnSqPq-KTk7DQKBHbFDE/gviz/tq?tqx=out:csv&gid=0'
 };
 
 // CSVテキストを配列に変換(ダブルクォート・カンマ・改行に対応)
@@ -75,11 +76,23 @@ async function fetchSheetRows(url) {
 async function main() {
   await mkdir(DATA_DIR, { recursive: true });
 
+  // 1つのシートの取得に失敗しても(共有設定忘れなど)、他のシートの更新を
+  // 止めないようにそれぞれ個別に処理します。
+  let successCount = 0;
   for (const [file, url] of Object.entries(SHEETS)) {
-    const rows = await fetchSheetRows(url);
-    const filePath = path.join(DATA_DIR, file);
-    await writeFile(filePath, JSON.stringify(rows, null, 2) + '\n', 'utf8');
-    console.log('Wrote data/' + file + ' (' + rows.length + ' rows)');
+    try {
+      const rows = await fetchSheetRows(url);
+      const filePath = path.join(DATA_DIR, file);
+      await writeFile(filePath, JSON.stringify(rows, null, 2) + '\n', 'utf8');
+      console.log('Wrote data/' + file + ' (' + rows.length + ' rows)');
+      successCount++;
+    } catch (err) {
+      console.error('data/' + file + ' の更新に失敗しました(共有設定を確認してください):', err.message);
+    }
+  }
+
+  if (successCount === 0) {
+    throw new Error('すべてのシートの取得に失敗しました');
   }
 }
 

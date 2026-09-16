@@ -11,6 +11,7 @@
   var SHOP_JSON_URL = 'data/shop.json';
   var STORE_INFO_JSON_URL = 'data/store-info.json';
   var STAFF_JSON_URL = 'data/staff.json';
+  var SITE_TEXT_JSON_URL = 'data/site-text.json';
 
   var MENU_ICONS = {
     'カット': '✂️',
@@ -40,6 +41,11 @@
       el.textContent = '🔄 スプレッドシートの最新情報を表示しています';
       el.classList.add('visible');
     }
+  }
+
+  function setText(id, value) {
+    var el = document.getElementById(id);
+    if (el && value) { el.textContent = value; }
   }
 
   // メニュー・料金セクションをスプレッドシートの内容で描画
@@ -98,11 +104,6 @@
     if (!rows.length) { return; }
     var info = {};
     rows.forEach(function (r) { info[r.key] = r.value; });
-
-    function setText(id, value) {
-      var el = document.getElementById(id);
-      if (el && value) { el.textContent = value; }
-    }
 
     setText('infoStoreName', info['店名']);
 
@@ -167,6 +168,31 @@
     showSyncNote('staffSyncNote');
   }
 
+  // トップページ内の見出し・説明文をスプレッドシートの内容で反映
+  function renderSiteText(rows) {
+    if (!rows.length) { return; }
+    var text = {};
+    rows.forEach(function (r) { text[r.key] = r.value; });
+
+    setText('heroTitle', text['hero_title']);
+    setText('heroLead', text['hero_lead']);
+    setText('conceptLead', text['concept_lead']);
+    setText('conceptCard1Title', text['concept_card1_title']);
+    setText('conceptCard1Text', text['concept_card1_text']);
+    setText('conceptCard2Title', text['concept_card2_title']);
+    setText('conceptCard2Text', text['concept_card2_text']);
+    setText('conceptCard3Title', text['concept_card3_title']);
+    setText('conceptCard3Text', text['concept_card3_text']);
+    setText('conceptCard4Title', text['concept_card4_title']);
+    setText('conceptCard4Text', text['concept_card4_text']);
+    setText('menuLead', text['menu_lead']);
+    setText('menuNote', text['menu_note']);
+    setText('shopLead', text['shop_lead']);
+    setText('staffLead', text['staff_lead']);
+    setText('galleryLead', text['gallery_lead']);
+    setText('contactLead', text['contact_lead']);
+  }
+
   function escapeHTML(str) {
     return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
       return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
@@ -184,6 +210,9 @@
   });
   fetchJSON(STAFF_JSON_URL).then(renderStaff).catch(function (err) {
     console.warn('スタッフ情報データの読み込みに失敗しました(仮の内容を表示中):', err);
+  });
+  fetchJSON(SITE_TEXT_JSON_URL).then(renderSiteText).catch(function (err) {
+    console.warn('サイト文言データの読み込みに失敗しました(仮の内容を表示中):', err);
   });
 
   // モバイルナビゲーションの開閉
