@@ -204,11 +204,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.calendar-booking.status-pending{ background: #fff3d6; }
-.calendar-booking.status-confirmed{ background: #fde1de; }
-.calendar-booking.status-completed{ background: #e3f0e3; }
-.calendar-booking.status-cancelled{ background: #eee; color: #999; text-decoration: line-through; }
-.calendar-booking:hover{ filter: brightness(0.95); }
+/* 背景色はメニューのカテゴリごとにJSでinline style指定(色の一覧はjs/admin.jsを参照) */
+.calendar-booking.status-cancelled{ background: #eee !important; color: #999; text-decoration: line-through; }
+.calendar-booking.status-pending{ border: 1px dashed rgba(43,36,32,0.35); }
+.calendar-booking:hover{ filter: brightness(0.92); }
 
 .booking-card.highlight{
   animation: highlightPulse 1.6s ease;
@@ -249,3 +248,56 @@
 .shift-item-label{ font-weight: 700; color: var(--charcoal); font-size: 14px; }
 .shift-item-time{ font-size: 13px; color: var(--text); }
 .shift-item-actions{ display: flex; gap: 8px; }
+
+/* ---------- 予約詳細モーダル ---------- */
+.modal-overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(43,36,32,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 200;
+}
+.modal-box{
+  position: relative;
+  background: #fff;
+  border-radius: var(--radius-md);
+  padding: 32px 28px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+}
+.modal-close{
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 32px; height: 32px;
+  border: none;
+  background: var(--cream);
+  border-radius: 50%;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--charcoal);
+}
+.modal-content h3{ font-size: 17px; color: var(--charcoal); margin: 0 0 12px; }
+.modal-content p{ font-size: 13.5px; margin: 6px 0; }
+.modal-content a{ color: var(--red); font-weight: 700; }
+.modal-category-badge{
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--charcoal);
+  border-radius: 999px;
+  padding: 3px 10px;
+  margin-right: 6px;
+}
+.modal-actions{
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}

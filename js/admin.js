@@ -8,6 +8,27 @@
     cancelled: 'キャンセル'
   };
   var WEEKDAYS = ['日', '月', '火', '水', '木', '金', '土'];
+
+  // 週間スケジュールの枠の色は、メニューのカテゴリごとに変えています。
+  // 新しいカテゴリを追加した場合は、ここに色を足してください(足さなくても
+  // 既定の色で表示されます)。
+  var CATEGORY_COLORS = {
+    'カット': '#cfe8ff',
+    '学生カット': '#cfe8ff',
+    'キッズカット': '#cfe8ff',
+    '前髪カット': '#cfe8ff',
+    'カラー': '#ffd6e0',
+    'パーマ': '#e6d6ff',
+    'デジタルパーマ': '#ddc7ff',
+    '縮毛矯正': '#ffe0b3',
+    'トリートメント': '#d3f0d3',
+    'ヘッドスパ': '#c9f0e8'
+  };
+  var DEFAULT_CATEGORY_COLOR = '#e8e5df';
+
+  function categoryColor(category) {
+    return CATEGORY_COLORS[category] || DEFAULT_CATEGORY_COLOR;
+  }
   var CALENDAR_START_MIN = 9 * 60;
   var CALENDAR_END_MIN = 20 * 60;
   var SLOT_MINUTES = 30;
@@ -30,6 +51,9 @@
   var prevWeekBtn = document.getElementById('prevWeekBtn');
   var nextWeekBtn = document.getElementById('nextWeekBtn');
   var todayBtn = document.getElementById('todayBtn');
+  var bookingModal = document.getElementById('bookingModal');
+  var modalCloseBtn = document.getElementById('modalCloseBtn');
+  var modalContent = document.getElementById('modalContent');
 
   function showUnavailable(text) {
     if (configWarning) {
@@ -185,11 +209,104 @@
       });
     }
 
+    // そのお客様の予約に紐づく空き枠ロック(booked_slots)をすべて解放します。
+    // キャンセル・削除のときに呼び、その日時を再び予約できるようにします。
+    function releaseBookedSlots(id) {
+      var q = mod.query(mod.collection(mod.db, 'booked_slots'), mod.where('bookingId', '==', id));
+      mod.getDocs(q).then(function (snapshot) {
+        snapshot.docs.forEach(function (d) {
+          mod.deleteDoc(mod.doc(mod.db, 'booked_slots', d.id)).catch(function (err) {
+            console.error('空き枠の解放に失敗しました:', err);
+          });
+        });
+      }).catch(function (err) {
+        console.error('空き枠ロックの検索に失敗しました:', err);
+      });
+    }
+
+    // 確定・完了・キャンセル・削除の操作(一覧・モーダルの両方から呼ばれます)
+    function performAction(id, action) {
+      if (action === 'delete') {
+        if (!window.confirm('この予約を削除します。よろしいですか?(元に戻せません)')) { return; }
+        mod.deleteDoc(mod.doc(mod.db, 'bookings', id)).then(function () {
+          releaseBookedSlots(id);
+        }).catch(function (err) {
+          console.error('削除に失敗しました:', err);
+          window.alert('削除に失敗しました。');
+        });
+        return;
+      }
+      mod.updateDoc(mod.doc(mod.db, 'bookings', id), { status: action }).then(function () {
+        if (action === 'cancelled') { releaseBookedSlots(id); }
+      }).catch(function (err) {
+        console.error('更新に失敗しました:', err);
+        window.alert('更新に失敗しました。');
+      });
+    }
+
+    function actionButtonsHTML(b) {
+      var actions = '';
+      if (b.status === 'pending') {
+        actions += '<button type="button" class="btn btn-primary btn-sm" data-action="confirmed" data-id="' + b.id + '">確定にする</button>';
+        actions += '<button type="button" class="btn btn-outline btn-sm" data-action="cancelled" data-id="' + b.id + '">キャンセル</button>';
+      } else if (b.status === 'confirmed') {
+        actions += '<button type="button" class="btn btn-primary btn-sm" data-action="completed" data-id="' + b.id + '">完了にする</button>';
+        actions += '<button type="button" class="btn btn-outline btn-sm" data-action="cancelled" data-id="' + b.id + '">キャンセル</button>';
+      }
+      actions += '<button type="button" class="btn btn-outline btn-sm btn-danger" data-action="delete" data-id="' + b.id + '">削除</button>';
+      return actions;
+    }
+
+    function openBookingModal(id) {
+      var b = allBookings.filter(function (x) { return x.id === id; })[0];
+      if (!b || !modalContent) { return; }
+
+      modalContent.innerHTML =
+        '<span class="modal-category-badge" style="background:' + categoryColor(b.category) + '">' + escapeHTML(b.category || 'メニュー') + '</span>' +
+        '<span class="booking-status-badge">' + escapeHTML(STATUS_LABELS[b.status] || b.status) + '</span>' +
+        '<h3>' + formatDate(b.date) + ' ' + escapeHTML(b.time) + '〜(約' + escapeHTML(String(b.durationMinutes || '')) + '分)</h3>' +
+        '<p><strong>' + escapeHTML(b.name) + '</strong> 様(<a href="tel:' + escapeHTML((b.phone || '').replace(/[^0-9]/g, '')) + '">' + escapeHTML(b.phone) + '</a>)</p>' +
+        '<p>メニュー: ' + escapeHTML(b.menu) + '</p>' +
+        '<p>担当: ' + escapeHTML(b.staffName || '未設定') + '</p>' +
+        (b.notes ? '<p class="booking-notes">備考: ' + escapeHTML(b.notes) + '</p>' : '') +
+        '<div class="modal-actions">' + actionButtonsHTML(b) +
+        '<button type="button" class="btn btn-outline btn-sm" id="modalShowInListBtn">一覧で見る</button></div>';
+
+      bookingModal.hidden = false;
+    }
+
+    function closeBookingModal() {
+      if (bookingModal) { bookingModal.hidden = true; }
+    }
+
+    if (modalCloseBtn) { modalCloseBtn.addEventListener('click', closeBookingModal); }
+    if (bookingModal) {
+      bookingModal.addEventListener('click', function (e) {
+        if (e.target === bookingModal) { closeBookingModal(); }
+      });
+    }
+    if (modalContent) {
+      modalContent.addEventListener('click', function (e) {
+        var showInListBtn = e.target.closest('#modalShowInListBtn');
+        if (showInListBtn) {
+          var idAttr = modalContent.querySelector('[data-id]');
+          var id = idAttr ? idAttr.getAttribute('data-id') : null;
+          closeBookingModal();
+          if (id) { showBookingInList(id); }
+          return;
+        }
+        var btn = e.target.closest('button[data-action]');
+        if (!btn) { return; }
+        performAction(btn.getAttribute('data-id'), btn.getAttribute('data-action'));
+        closeBookingModal();
+      });
+    }
+
     if (calendarTable) {
       calendarTable.addEventListener('click', function (e) {
         var btn = e.target.closest('.calendar-booking');
         if (!btn) { return; }
-        showBookingInList(btn.getAttribute('data-id'));
+        openBookingModal(btn.getAttribute('data-id'));
       });
     }
 
@@ -232,9 +349,10 @@
           var here = (byDateSlot[key] && byDateSlot[key][slot]) || [];
           if (!here.length) { return '<td class="calendar-slot"></td>'; }
           var content = here.map(function (b) {
-            var titleText = b.time + ' ' + b.name + '様 / ' + b.menu;
+            var titleText = b.time + ' ' + b.name + '様 / ' + b.menu + '(' + (b.staffName || '担当未設定') + ')';
+            var bg = b.status === 'cancelled' ? '' : ' style="background:' + categoryColor(b.category) + '"';
             return '<button type="button" class="calendar-booking status-' + escapeHTML(b.status) +
-              '" data-id="' + escapeHTML(b.id) + '" title="' + escapeHTML(titleText) + '">' +
+              '" data-id="' + escapeHTML(b.id) + '" title="' + escapeHTML(titleText) + '"' + bg + '>' +
               escapeHTML(b.time) + ' ' + escapeHTML(b.name) + '</button>';
           }).join('');
           return '<td class="calendar-slot">' + content + '</td>';
@@ -294,25 +412,16 @@
       emptyMessage.hidden = true;
 
       bookingList.innerHTML = rows.map(function (b) {
-        var actions = '';
-        if (b.status === 'pending') {
-          actions += '<button type="button" class="btn btn-primary btn-sm" data-action="confirmed" data-id="' + b.id + '">確定にする</button>';
-          actions += '<button type="button" class="btn btn-outline btn-sm" data-action="cancelled" data-id="' + b.id + '">キャンセル</button>';
-        } else if (b.status === 'confirmed') {
-          actions += '<button type="button" class="btn btn-primary btn-sm" data-action="completed" data-id="' + b.id + '">完了にする</button>';
-          actions += '<button type="button" class="btn btn-outline btn-sm" data-action="cancelled" data-id="' + b.id + '">キャンセル</button>';
-        }
-        actions += '<button type="button" class="btn btn-outline btn-sm btn-danger" data-action="delete" data-id="' + b.id + '">削除</button>';
-
-        return '<div class="booking-card status-' + escapeHTML(b.status) + '" id="booking-' + escapeHTML(b.id) + '">' +
+        return '<div class="booking-card status-' + escapeHTML(b.status) + '" id="booking-' + escapeHTML(b.id) + '" data-id="' + escapeHTML(b.id) + '">' +
           '<div class="booking-card-main">' +
+          '<span class="modal-category-badge" style="background:' + categoryColor(b.category) + '">' + escapeHTML(b.category || 'メニュー') + '</span>' +
           '<span class="booking-status-badge">' + escapeHTML(STATUS_LABELS[b.status] || b.status) + '</span>' +
-          '<h3>' + formatDate(b.date) + ' ' + escapeHTML(b.time) + '〜</h3>' +
+          '<h3>' + formatDate(b.date) + ' ' + escapeHTML(b.time) + '〜(約' + escapeHTML(String(b.durationMinutes || '')) + '分)</h3>' +
           '<p><strong>' + escapeHTML(b.name) + '</strong> 様(<a href="tel:' + escapeHTML((b.phone || '').replace(/[^0-9]/g, '')) + '">' + escapeHTML(b.phone) + '</a>)</p>' +
-          '<p>メニュー: ' + escapeHTML(b.menu) + '</p>' +
+          '<p>メニュー: ' + escapeHTML(b.menu) + ' / 担当: ' + escapeHTML(b.staffName || '未設定') + '</p>' +
           (b.notes ? '<p class="booking-notes">備考: ' + escapeHTML(b.notes) + '</p>' : '') +
           '</div>' +
-          '<div class="booking-card-actions">' + actions + '</div>' +
+          '<div class="booking-card-actions">' + actionButtonsHTML(b) + '</div>' +
           '</div>';
       }).join('');
     }
@@ -321,22 +430,7 @@
       bookingList.addEventListener('click', function (e) {
         var btn = e.target.closest('button[data-action]');
         if (!btn) { return; }
-        var id = btn.getAttribute('data-id');
-        var action = btn.getAttribute('data-action');
-
-        if (action === 'delete') {
-          if (!window.confirm('この予約を削除します。よろしいですか?(元に戻せません)')) { return; }
-          mod.deleteDoc(mod.doc(mod.db, 'bookings', id)).catch(function (err) {
-            console.error('削除に失敗しました:', err);
-            window.alert('削除に失敗しました。');
-          });
-          return;
-        }
-
-        mod.updateDoc(mod.doc(mod.db, 'bookings', id), { status: action }).catch(function (err) {
-          console.error('更新に失敗しました:', err);
-          window.alert('更新に失敗しました。');
-        });
+        performAction(btn.getAttribute('data-id'), btn.getAttribute('data-action'));
       });
     }
 
@@ -352,6 +446,9 @@
             date: data.date || '',
             time: data.time || '',
             menu: data.menu || '',
+            category: data.category || '',
+            durationMinutes: data.durationMinutes || null,
+            staffName: data.staffName || '',
             notes: data.notes || '',
             status: data.status || 'pending'
           };

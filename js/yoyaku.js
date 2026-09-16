@@ -229,6 +229,7 @@ import {
         durationMinutes: getMenuDuration(menu.category),
         staffCandidates: staffCandidates,
         menuName: menu.name,
+        menuCategory: menu.category || 'その他',
         staffLabel: staffSelect.value || 'おまかせ'
       };
 
@@ -312,6 +313,7 @@ import {
             date: selectedSlot.date,
             time: selectedSlot.time,
             menu: selectedSlot.menuName,
+            category: selectedSlot.menuCategory,
             durationMinutes: selectedSlot.durationMinutes,
             staffName: assigned.staffName,
             status: 'pending',
