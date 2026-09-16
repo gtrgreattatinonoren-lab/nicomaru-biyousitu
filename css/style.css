@@ -61,6 +61,9 @@ p{ margin: 0; line-height: 1.8; }
 .sp-only{ display: none; }
 
 /* ---------- buttons ---------- */
+/* hidden属性がついている間は、下のdisplay指定より必ず優先させる
+   (モーダルと同じ理由。ログアウトボタンなどhiddenで出し分けるボタンに必要) */
+.btn[hidden]{ display: none !important; }
 .btn{
   display: inline-flex;
   align-items: center;
@@ -540,6 +543,9 @@ p{ margin: 0; line-height: 1.8; }
 }
 
 .form-row{ margin-bottom: 20px; }
+/* hidden属性がついている間は、下のdisplay:gridより必ず優先させる
+   (シフト管理画面の時間入力欄など、hiddenで出し分ける行に必要) */
+.form-row-split[hidden]{ display: none !important; }
 .form-row-split{
   display: grid;
   grid-template-columns: 1fr 1fr;

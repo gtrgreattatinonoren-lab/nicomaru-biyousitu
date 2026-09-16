@@ -250,6 +250,9 @@
 .shift-item-actions{ display: flex; gap: 8px; }
 
 /* ---------- 予約詳細モーダル ---------- */
+/* [hidden]属性が付いている間は、下の display:flex より必ず優先させる
+   (これがないと、閉じているはずのモーダルが常に画面を覆ってしまう) */
+.modal-overlay[hidden]{ display: none !important; }
 .modal-overlay{
   position: fixed;
   inset: 0;
