@@ -6,43 +6,57 @@ Hair & Beauty Salon にこまる美容室の公式ホームページです。
 ## ファイル構成
 
 ```
-index.html               ページ本体
-yoyaku.html               ネット予約フォーム(お客様向け)
-admin/index.html          予約管理画面(スタッフ専用・ログイン必須)
-css/style.css              デザイン(色・レイアウト)
-css/admin.css              予約管理画面専用のデザイン
-js/main.js                 ハンバーガーメニュー・スクロールアニメーション・スプレッドシート連携
-js/firebase-config.js      Firebaseプロジェクトの接続情報(要編集)
-js/firebase-init.js        Firebase SDKの初期化(共通処理)
-js/yoyaku.js               ネット予約フォームの送信処理
-js/admin.js                予約管理画面のログイン・一覧表示・操作処理
-firestore.rules            Firestoreのセキュリティルール(Firebaseコンソールに貼り付け用)
-assets/img/logo.png        ロゴ画像
+index.html                       ページ本体
+yoyaku.html                       ネット予約フォーム(お客様向け)
+admin/index.html                  予約管理画面(スタッフ専用・ログイン必須)
+css/style.css                      デザイン(色・レイアウト)
+css/admin.css                      予約管理画面専用のデザイン
+js/main.js                         ハンバーガーメニュー・スクロールアニメーション・データ表示
+js/firebase-config.js              Firebaseプロジェクトの接続情報(要編集)
+js/firebase-init.js                Firebase SDKの初期化(共通処理)
+js/yoyaku.js                       ネット予約フォームの送信処理
+js/admin.js                        予約管理画面のログイン・一覧表示・操作処理
+firestore.rules                    Firestoreのセキュリティルール(Firebaseコンソールに貼り付け用)
+data/menu.json                     メニュー・料金(スプレッドシートから自動生成・直接編集不要)
+data/shop.json                     物販(同上)
+data/store-info.json               店舗情報(同上)
+data/staff.json                    スタッフ紹介(同上)
+scripts/sync-sheets.mjs            スプレッドシート→data/*.json への変換スクリプト
+.github/workflows/sync-sheets.yml  上記を定期的に自動実行するGitHub Actions設定
+assets/img/logo.png                ロゴ画像
 ```
 
 ## メニュー・料金・物販・店舗情報・スタッフ紹介はGoogleスプレッドシートと自動連携しています
 
-このサイトの「メニュー・料金」「物販」「アクセス・営業時間」「ご予約・お問い合わせ」「スタッフ紹介」セクションは、以下の4つのGoogleスプレッドシートを自動で読み込んで表示します。
-**スプレッドシートの内容を編集するだけで、サイト側は何もしなくても数十秒〜数分で反映されます。**(ファイルの再アップロードは不要です)
+このサイトの「メニュー・料金」「物販」「アクセス・営業時間」「ご予約・お問い合わせ」「スタッフ紹介」セクションは、以下の4つのGoogleスプレッドシートの内容を表示します。
 
 - メニュー用シート: https://docs.google.com/spreadsheets/d/1RImllNJFktSgC_on3u8TwsrB2Ml9VY_REjnZurUeWXQ/edit
 - 物販用シート: https://docs.google.com/spreadsheets/d/1tUm9vcwxFQcmePR6c52iKO0d6asNkS28m19FpAoTXGs/edit
 - 店舗情報用シート: https://docs.google.com/spreadsheets/d/18XFhut26DxMbK4YUnTcoa2FV4pW5U-bembK3WdokPdo/edit
 - スタッフ紹介用シート: https://docs.google.com/spreadsheets/d/1tT4duASTJzG3G8KtR0s5cxJbaK10KS79YgGdAB428K8/edit
 
-すでにお使いのGoogleアカウントに作成済みです。以下の2ステップだけ行ってください。
+すでにお使いのGoogleアカウントに作成済みです。共有設定(リンクを知っている全員が閲覧者)も設定済みなので、**内容の入力だけ**すればOKです。
 
-### ステップ1: 共有設定を変更する(最初の1回だけ・4シートすべてで必要)
+### 仕組みについて(なぜ反映に少し時間がかかるか)
 
-サイトがシートを読み込めるように、**4つのシートそれぞれ**で以下を設定してください。
+以前は「サイトを見た人のブラウザが、その場でGoogleに直接読みに行く」方式でしたが、ネットワーク環境によって読み込みに失敗することがあったため、**より安定した方式に変更しました**。
 
-1. シートを開く
-2. 右上の「共有」ボタンをクリック
-3. 「全般的なアクセス」を「制限付き」→「**リンクを知っている全員**」に変更
-4. 権限は「**閲覧者**」のままでOK
-5. 「完了」をクリック
+- スプレッドシートを編集する
+- → GitHubの自動処理(GitHub Actions)が、**30分ごとに**スプレッドシートの内容を読み取り、`data/menu.json` などのファイルに変換して自動的にサイトへコミットします
+- → サイトはそのファイルを表示するだけなので、訪問者の通信環境に左右されず安定して表示されます
 
-### ステップ2: 内容を入力する
+**すぐに反映させたい場合**は、30分待たずに手動で実行できます。
+
+1. GitHubのリポジトリページで「**Actions**」タブを開く
+2. 左側の「Googleスプレッドシートをサイトに反映」をクリック
+3. 右側の「Run workflow」ボタン →「Run workflow」を押す
+4. 1分ほどで実行が完了し(緑のチェックマークが付きます)、サイトに反映されます
+
+⚠️ もし実行結果が赤い✕になり、ログに `Permission denied` のようなエラーが出ている場合は、次を確認してください。
+- 「Settings」→「Actions」→「General」→ 一番下の「Workflow permissions」で
+  「**Read and write permissions**」を選択して保存してください(初期設定では読み取り専用になっていることがあります)。
+
+### スプレッドシートの内容を入力する
 
 **メニュー用シート**の列:
 
@@ -93,11 +107,11 @@ assets/img/logo.png        ロゴ画像
 
 行を追加・削除・並べ替えすれば、そのままサイトに反映されます(メニューはカテゴリ名を新しく追加すると自動的に新しいブロックとして表示され、アイコンは✨が付きます。スタッフも行の追加・削除がそのまま人数に反映されます)。
 
-もし読み込みに失敗した場合(共有設定忘れなど)は、`index.html` にもともと書かれている仮の内容がそのまま表示されるので、サイトが壊れて見えることはありません。
+もし何らかの理由で自動反映が止まってしまった場合は、`data/*.json` にもともと書かれている(最後に成功した)内容がそのまま表示されるので、サイトが壊れて見えることはありません。
 
 ### 別のスプレッドシートに切り替えたい場合
 
-`js/main.js` の先頭付近にある `MENU_CSV_URL` / `SHOP_CSV_URL` / `STORE_INFO_CSV_URL` / `STAFF_CSV_URL` を、新しいスプレッドシートのURLに書き換えてください(書き換え方は同ファイルのコメントに記載しています)。
+`scripts/sync-sheets.mjs` の中にある `SHEETS` の各URLを、新しいスプレッドシートのURLに書き換えてコミット・pushしてください。`data/*.json` を直接手で編集しても、次回の自動反映(30分後、または手動実行時)で上書きされてしまうので編集しないでください。
 
 ## その他、編集してほしい箇所(現在は仮の内容が入っています)
 

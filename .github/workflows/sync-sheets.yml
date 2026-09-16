@@ -1,0 +1,38 @@
+name: Googleスプレッドシートをサイトに反映
+
+on:
+  # 30分ごとに自動実行
+  schedule:
+    - cron: '*/30 * * * *'
+  # 「Actions」タブから手動実行もできるようにする(スプレッドシートを編集した直後にすぐ反映したい場合)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: リポジトリを取得
+        uses: actions/checkout@v4
+
+      - name: Node.jsをセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: スプレッドシートをdata/*.jsonに変換
+        run: node scripts/sync-sheets.mjs
+
+      - name: 変更があればコミット・push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          if git diff --cached --quiet; then
+            echo "変更なし"
+          else
+            git commit -m "スプレッドシートの内容を自動反映"
+            git push
+          fi

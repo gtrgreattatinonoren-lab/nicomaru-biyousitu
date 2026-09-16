@@ -2,15 +2,15 @@
   'use strict';
 
   // ==========================================================================
-  // Googleスプレッドシート連携設定
-  // ここのURLを差し替えれば、別のスプレッドシートに切り替えられます。
-  // スプレッドシート側は「共有」→「一般的なアクセス」を
-  // 「リンクを知っている全員」+「閲覧者」に設定しておく必要があります。
+  // スプレッドシート連携データ
+  // GitHub Actions(.github/workflows/sync-sheets.yml)がGoogleスプレッドシートの
+  // 内容を定期的に data/*.json に変換してくれるので、サイト側は同じオリジンの
+  // JSONファイルを読むだけです(ブラウザから直接Googleに読みに行かないため安定します)。
   // ==========================================================================
-  var MENU_CSV_URL = 'https://docs.google.com/spreadsheets/d/1RImllNJFktSgC_on3u8TwsrB2Ml9VY_REjnZurUeWXQ/export?format=csv&gid=0';
-  var SHOP_CSV_URL = 'https://docs.google.com/spreadsheets/d/1tUm9vcwxFQcmePR6c52iKO0d6asNkS28m19FpAoTXGs/export?format=csv&gid=0';
-  var STORE_INFO_CSV_URL = 'https://docs.google.com/spreadsheets/d/18XFhut26DxMbK4YUnTcoa2FV4pW5U-bembK3WdokPdo/export?format=csv&gid=0';
-  var STAFF_CSV_URL = 'https://docs.google.com/spreadsheets/d/1tT4duASTJzG3G8KtR0s5cxJbaK10KS79YgGdAB428K8/export?format=csv&gid=0';
+  var MENU_JSON_URL = 'data/menu.json';
+  var SHOP_JSON_URL = 'data/shop.json';
+  var STORE_INFO_JSON_URL = 'data/store-info.json';
+  var STAFF_JSON_URL = 'data/staff.json';
 
   var MENU_ICONS = {
     'カット': '✂️',
@@ -21,57 +21,17 @@
   var DEFAULT_MENU_ICON = '✨';
   var SHOP_IMG_CLASSES = ['shop-img-1', 'shop-img-2', 'shop-img-3'];
 
-  // CSVテキストを配列に変換(ダブルクォート・カンマ・改行に対応)
-  function parseCSV(text) {
-    var rows = [];
-    var row = [];
-    var field = '';
-    var inQuotes = false;
-    text = text.replace(/\r\n/g, '\n');
-    for (var i = 0; i < text.length; i++) {
-      var c = text[i];
-      if (inQuotes) {
-        if (c === '"') {
-          if (text[i + 1] === '"') { field += '"'; i++; }
-          else { inQuotes = false; }
-        } else {
-          field += c;
-        }
-      } else if (c === '"') {
-        inQuotes = true;
-      } else if (c === ',') {
-        row.push(field); field = '';
-      } else if (c === '\n') {
-        row.push(field); field = '';
-        rows.push(row); row = [];
-      } else {
-        field += c;
-      }
-    }
-    if (field.length || row.length) { row.push(field); rows.push(row); }
-
-    if (!rows.length) { return []; }
-    var headers = rows[0].map(function (h) { return h.trim(); });
-    return rows.slice(1)
-      .filter(function (r) { return r.some(function (v) { return v.trim() !== ''; }); })
-      .map(function (r) {
-        var obj = {};
-        headers.forEach(function (h, idx) { obj[h] = (r[idx] || '').trim(); });
-        return obj;
-      });
-  }
-
   function formatYen(price) {
     var n = parseInt(String(price).replace(/[^0-9]/g, ''), 10);
     if (isNaN(n)) { return price; }
     return '¥' + n.toLocaleString('ja-JP');
   }
 
-  function fetchCSV(url) {
+  function fetchJSON(url) {
     return fetch(url, { cache: 'no-store' }).then(function (res) {
       if (!res.ok) { throw new Error('HTTP ' + res.status); }
-      return res.text();
-    }).then(parseCSV);
+      return res.json();
+    });
   }
 
   function showSyncNote(id) {
@@ -213,17 +173,17 @@
     });
   }
 
-  fetchCSV(MENU_CSV_URL).then(renderMenu).catch(function (err) {
-    console.warn('メニューのスプレッドシート読み込みに失敗しました(仮の内容を表示中):', err);
+  fetchJSON(MENU_JSON_URL).then(renderMenu).catch(function (err) {
+    console.warn('メニューデータの読み込みに失敗しました(仮の内容を表示中):', err);
   });
-  fetchCSV(SHOP_CSV_URL).then(renderShop).catch(function (err) {
-    console.warn('物販のスプレッドシート読み込みに失敗しました(仮の内容を表示中):', err);
+  fetchJSON(SHOP_JSON_URL).then(renderShop).catch(function (err) {
+    console.warn('物販データの読み込みに失敗しました(仮の内容を表示中):', err);
   });
-  fetchCSV(STORE_INFO_CSV_URL).then(renderStoreInfo).catch(function (err) {
-    console.warn('店舗情報のスプレッドシート読み込みに失敗しました(仮の内容を表示中):', err);
+  fetchJSON(STORE_INFO_JSON_URL).then(renderStoreInfo).catch(function (err) {
+    console.warn('店舗情報データの読み込みに失敗しました(仮の内容を表示中):', err);
   });
-  fetchCSV(STAFF_CSV_URL).then(renderStaff).catch(function (err) {
-    console.warn('スタッフ情報のスプレッドシート読み込みに失敗しました(仮の内容を表示中):', err);
+  fetchJSON(STAFF_JSON_URL).then(renderStaff).catch(function (err) {
+    console.warn('スタッフ情報データの読み込みに失敗しました(仮の内容を表示中):', err);
   });
 
   // モバイルナビゲーションの開閉
