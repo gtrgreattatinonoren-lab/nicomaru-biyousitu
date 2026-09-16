@@ -57,10 +57,10 @@
         </form>
       </div>
 
-      <!-- 予約一覧画面(ログイン後に表示) -->
+      <!-- 予約管理画面(ログイン後に表示) -->
       <div id="dashboardView" hidden>
         <div class="admin-header-row">
-          <h1 class="section-title">予約一覧</h1>
+          <h1 class="section-title">予約管理</h1>
           <div class="admin-filter" id="statusFilter">
             <button type="button" class="filter-btn is-active" data-status="all">すべて</button>
             <button type="button" class="filter-btn" data-status="pending">受付待ち</button>
@@ -69,8 +69,31 @@
             <button type="button" class="filter-btn" data-status="cancelled">キャンセル</button>
           </div>
         </div>
-        <p class="admin-empty" id="emptyMessage" hidden>該当する予約はありません。</p>
-        <div class="admin-list" id="bookingList"></div>
+
+        <div class="admin-view-toggle" id="viewToggle">
+          <button type="button" class="view-btn is-active" data-view="calendar">週間スケジュール</button>
+          <button type="button" class="view-btn" data-view="list">予約一覧</button>
+        </div>
+
+        <!-- 週間スケジュール表示 -->
+        <div id="calendarView">
+          <div class="calendar-nav">
+            <button type="button" class="btn btn-outline btn-sm" id="prevWeekBtn">‹ 前の週</button>
+            <span class="calendar-week-label" id="weekLabel"></span>
+            <button type="button" class="btn btn-outline btn-sm" id="nextWeekBtn">次の週 ›</button>
+            <button type="button" class="btn btn-outline btn-sm" id="todayBtn">今週</button>
+          </div>
+          <p class="calendar-hint">枠をクリックすると、下の一覧でその予約を確認できます。</p>
+          <div class="calendar-scroll">
+            <table class="calendar-table" id="calendarTable"></table>
+          </div>
+        </div>
+
+        <!-- 予約一覧表示 -->
+        <div id="listView" hidden>
+          <p class="admin-empty" id="emptyMessage" hidden>該当する予約はありません。</p>
+          <div class="admin-list" id="bookingList"></div>
+        </div>
       </div>
 
     </div>

@@ -97,3 +97,127 @@
 @media (max-width: 640px){
   .booking-card{ flex-direction: column; align-items: stretch; }
 }
+
+/* ---------- 表示切り替えタブ ---------- */
+.admin-view-toggle{
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--cream);
+}
+.view-btn{
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  opacity: .6;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  padding: 10px 4px;
+  margin-bottom: -2px;
+  cursor: pointer;
+}
+.view-btn.is-active{
+  opacity: 1;
+  color: var(--red-dark);
+  border-bottom-color: var(--red);
+}
+
+/* ---------- 週間スケジュール ---------- */
+.calendar-nav{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.calendar-week-label{
+  font-weight: 700;
+  color: var(--charcoal);
+  font-size: 14px;
+}
+.calendar-hint{
+  font-size: 12px;
+  color: var(--text);
+  opacity: .7;
+  margin-bottom: 12px;
+}
+
+.calendar-scroll{
+  overflow-x: auto;
+  background: #fff;
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 24px rgba(43,36,32,0.06);
+  margin-bottom: 32px;
+}
+
+.calendar-table{
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 720px;
+  font-size: 12.5px;
+}
+.calendar-table th, .calendar-table td{
+  border: 1px solid var(--cream);
+  padding: 0;
+}
+.calendar-table thead th{
+  background: var(--cream-light);
+  padding: 10px 6px;
+  text-align: center;
+  font-weight: 700;
+  color: var(--charcoal);
+  position: sticky;
+  top: 0;
+}
+.calendar-table thead th.is-today{ color: var(--red-dark); }
+.calendar-time-cell{
+  background: var(--cream-light);
+  color: var(--text);
+  font-weight: 700;
+  text-align: center;
+  padding: 6px 8px;
+  white-space: nowrap;
+  position: sticky;
+  left: 0;
+}
+.calendar-slot{
+  height: 34px;
+  vertical-align: top;
+  min-width: 92px;
+}
+.calendar-booking{
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 34px;
+  padding: 3px 6px;
+  border: none;
+  text-align: left;
+  font-family: var(--font);
+  font-size: 11.5px;
+  line-height: 1.3;
+  color: var(--charcoal);
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.calendar-booking.status-pending{ background: #fff3d6; }
+.calendar-booking.status-confirmed{ background: #fde1de; }
+.calendar-booking.status-completed{ background: #e3f0e3; }
+.calendar-booking.status-cancelled{ background: #eee; color: #999; text-decoration: line-through; }
+.calendar-booking:hover{ filter: brightness(0.95); }
+
+.booking-card.highlight{
+  animation: highlightPulse 1.6s ease;
+}
+@keyframes highlightPulse{
+  0%, 100% { box-shadow: 0 8px 24px rgba(43,36,32,0.06); }
+  30% { box-shadow: 0 0 0 4px var(--red); }
+}
+
+@media (max-width: 640px){
+  .calendar-nav{ justify-content: center; }
+}
