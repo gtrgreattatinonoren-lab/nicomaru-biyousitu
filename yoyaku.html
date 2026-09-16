@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ネット予約 | Hair &amp; Beauty Salon にこまる美容室</title>
-<meta name="description" content="にこまる美容室のネット予約フォームです。ご希望の日時・メニューをご入力のうえ送信してください。">
+<meta name="description" content="にこまる美容室のネット予約フォームです。メニュー・担当・ご希望日時を選んで送信してください。">
 <meta name="robots" content="noindex">
 <link rel="icon" href="assets/img/logo.png" type="image/png">
 <link rel="apple-touch-icon" href="assets/img/logo.png">
@@ -37,63 +37,75 @@
     <div class="container container-narrow">
       <p class="section-eyebrow">ONLINE BOOKING</p>
       <h1 class="section-title">ネット予約</h1>
-      <p class="section-lead">ご希望の日時・メニューをご入力のうえ送信してください。<br class="sp-only">
-        こちらは「予約リクエスト」の受付です。空き状況を確認のうえ、店舗より確定のご連絡をいたします。</p>
+      <p class="section-lead">メニュー・担当・ご希望日時を選んで送信してください。<br class="sp-only">
+        こちらは「予約リクエスト」の受付です。前日までのご予約に対応しています。</p>
 
       <p class="form-config-warning" id="configWarning" hidden>
         ⚠️ ネット予約フォームは現在準備中です。恐れ入りますが、お電話またはLINEでご予約ください。
       </p>
 
-      <form class="booking-form" id="bookingForm">
-        <div class="form-row">
-          <label for="name">お名前 <span class="required">必須</span></label>
-          <input type="text" id="name" name="name" maxlength="50" required autocomplete="name">
-        </div>
+      <div id="bookingSteps">
 
-        <div class="form-row">
-          <label for="phone">電話番号 <span class="required">必須</span></label>
-          <input type="tel" id="phone" name="phone" maxlength="20" required autocomplete="tel" placeholder="000-000-0000">
-        </div>
-
-        <div class="form-row form-row-split">
-          <div>
-            <label for="date">ご希望日 <span class="required">必須</span></label>
-            <input type="date" id="date" name="date" required>
+        <div class="booking-form">
+          <div class="form-row">
+            <label for="menuSelect">1. メニューを選択してください <span class="required">必須</span></label>
+            <select id="menuSelect" required>
+              <option value="" disabled selected>選択してください</option>
+            </select>
+            <p class="form-hint" id="menuDurationHint"></p>
           </div>
-          <div>
-            <label for="time">ご希望時間 <span class="required">必須</span></label>
-            <input type="time" id="time" name="time" min="10:00" max="18:00" required>
+
+          <div class="form-row">
+            <label for="staffSelect">2. 担当スタッフ</label>
+            <select id="staffSelect">
+              <option value="">おまかせ(空いているスタッフにお任せします)</option>
+            </select>
           </div>
         </div>
 
-        <div class="form-row">
-          <label for="menu">ご希望メニュー <span class="required">必須</span></label>
-          <select id="menu" name="menu" required>
-            <option value="" disabled selected>選択してください</option>
-            <option value="カット">カット</option>
-            <option value="カラー">カラー</option>
-            <option value="パーマ">パーマ</option>
-            <option value="トリートメント">トリートメント</option>
-            <option value="ヘッドスパ">ヘッドスパ</option>
-            <option value="その他(備考欄にご記入ください)">その他(備考欄にご記入ください)</option>
-          </select>
+        <div id="availabilitySection" class="booking-form" hidden>
+          <div class="availability-header">
+            <label>3. ご希望の日時を選択してください <span class="required">必須</span></label>
+            <button type="button" class="btn btn-outline btn-sm" id="refreshAvailabilityBtn">空き状況を更新</button>
+          </div>
+          <p class="form-hint">前日までのご予約受付です。表示されていない日・時間は現在ご予約いただけません。</p>
+          <p class="form-message" id="availabilityMessage" role="status"></p>
+          <div id="availabilityList" class="availability-list"></div>
         </div>
 
-        <div class="form-row">
-          <label for="notes">備考(任意)</label>
-          <textarea id="notes" name="notes" maxlength="500" rows="4" placeholder="ご要望などございましたらご記入ください"></textarea>
-        </div>
+        <form class="booking-form" id="bookingForm" hidden>
+          <p class="booking-summary" id="bookingSummary"></p>
 
-        <!-- スパム対策用のダミー項目(人間には見えません。入力があった場合は送信しません) -->
-        <div class="form-honeypot" aria-hidden="true">
-          <label for="website">website</label>
-          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
-        </div>
+          <div class="form-row">
+            <label for="name">お名前 <span class="required">必須</span></label>
+            <input type="text" id="name" name="name" maxlength="50" required autocomplete="name">
+          </div>
 
-        <p class="form-message" id="formMessage" role="status"></p>
+          <div class="form-row">
+            <label for="phone">電話番号 <span class="required">必須</span></label>
+            <input type="tel" id="phone" name="phone" maxlength="20" required autocomplete="tel" placeholder="000-000-0000">
+          </div>
 
-        <button type="submit" class="btn btn-primary" id="submitBtn">予約リクエストを送信する</button>
-      </form>
+          <div class="form-row">
+            <label for="notes">備考(任意)</label>
+            <textarea id="notes" name="notes" maxlength="500" rows="4" placeholder="ご要望などございましたらご記入ください"></textarea>
+          </div>
+
+          <!-- スパム対策用のダミー項目(人間には見えません。入力があった場合は送信しません) -->
+          <div class="form-honeypot" aria-hidden="true">
+            <label for="website">website</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <p class="form-message" id="formMessage" role="status"></p>
+
+          <div class="booking-form-actions">
+            <button type="submit" class="btn btn-primary" id="submitBtn">この内容で予約リクエストを送信する</button>
+            <button type="button" class="btn btn-outline" id="changeSlotBtn">日時を選び直す</button>
+          </div>
+        </form>
+
+      </div>
     </div>
   </section>
 </main>

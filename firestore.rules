@@ -17,6 +17,9 @@ rules_version = '2';
 // - createdAt(送信日時)はサーバー側の時刻(改ざん不可)のみ許可します。
 // - スタッフの勤務シフト(shifts)は、個人情報を含まないため誰でも閲覧できます
 //   (予約フォームが空き状況を判定するために必要)。追加・変更・削除はスタッフのみ。
+// - 予約枠のロック(booked_slots)は「その日時が埋まっているか」だけを表す
+//   個人情報を含まないデータで、誰でも閲覧できます。お客様の予約送信時に
+//   bookingsと同時に(1つの操作として)作成され、二重予約を防ぎます。
 // ==========================================================================
 
 service cloud.firestore {
@@ -42,6 +45,18 @@ service cloud.firestore {
       allow delete: if isStaff();
     }
 
+    match /booked_slots/{slotId} {
+
+      // 個人情報を含まないため、閲覧は誰でも可能(空き状況の表示に使用)
+      allow read: if true;
+
+      // お客様が予約を送信するときに、bookingsと同時に作成(ログイン不要)
+      allow create: if isValidBookedSlot(request.resource.data);
+
+      // 予約のキャンセル・削除にあわせて枠を空けるのは、スタッフのみ
+      allow update, delete: if isStaff();
+    }
+
     // これ以外のコレクションはすべて拒否(念のための保険)
     match /{document=**} {
       allow read, write: if false;
@@ -65,16 +80,27 @@ service cloud.firestore {
     }
 
     function isValidNewBooking(data) {
-      return data.keys().hasOnly(['name', 'phone', 'date', 'time', 'menu', 'notes', 'status', 'createdAt'])
-        && data.keys().hasAll(['name', 'phone', 'date', 'time', 'menu', 'status', 'createdAt'])
+      return data.keys().hasOnly(['name', 'phone', 'date', 'time', 'menu', 'durationMinutes', 'staffName', 'notes', 'status', 'createdAt'])
+        && data.keys().hasAll(['name', 'phone', 'date', 'time', 'menu', 'durationMinutes', 'staffName', 'status', 'createdAt'])
         && data.name is string && data.name.size() > 0 && data.name.size() <= 50
         && data.phone is string && data.phone.size() > 0 && data.phone.size() <= 20
         && data.date is string && data.date.size() == 10
         && data.time is string && data.time.size() == 5
         && data.menu is string && data.menu.size() <= 100
+        && data.durationMinutes is int && data.durationMinutes > 0 && data.durationMinutes <= 600
+        && data.staffName is string && data.staffName.size() > 0 && data.staffName.size() <= 50
         && (!('notes' in data) || (data.notes is string && data.notes.size() <= 500))
         && data.status == 'pending'
         && data.createdAt == request.time;
+    }
+
+    function isValidBookedSlot(data) {
+      return data.keys().hasOnly(['date', 'staffName', 'time', 'bookingId'])
+        && data.keys().hasAll(['date', 'staffName', 'time', 'bookingId'])
+        && data.date is string && data.date.size() == 10
+        && data.staffName is string && data.staffName.size() > 0 && data.staffName.size() <= 50
+        && data.time is string && data.time.size() == 5
+        && data.bookingId is string && data.bookingId.size() > 0 && data.bookingId.size() <= 50;
     }
   }
 }

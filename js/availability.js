@@ -71,6 +71,24 @@ export function buildExceptionShiftId(staffName, dateKey) {
   return staffName + '__exception__' + dateKey;
 }
 
+// 予約の空き枠を「押さえる」ためのロック用ドキュメントID(Firestoreのbooked_slotsコレクション)。
+// 30分刻みのマス目ごとに1つ作られます(例: 60分のメニューなら2個)。
+export function buildBookedSlotId(date, staffName, time) {
+  return date + '__' + staffName + '__' + time;
+}
+
+// 開始時刻(HH:MM)と所要時間から、押さえる必要がある30分刻みのマス目(開始時刻の配列)を返します。
+export function getRequiredSlotTimes(startTime, durationMinutes, slotStepMinutes) {
+  var step = slotStepMinutes || 30;
+  var start = timeToMinutes(startTime);
+  var end = start + durationMinutes;
+  var times = [];
+  for (var t = start; t < end; t += step) {
+    times.push(minutesToTime(t));
+  }
+  return times;
+}
+
 // 指定スタッフの、指定日の勤務時間を返します(休みの場合は null)。
 // shiftRows: シフトの一覧(Firestoreのshiftsコレクションのドキュメントの配列)
 //   - type: 'weekly'(曜日ごとの基本パターン) または 'exception'(個別の休み・特別出勤)

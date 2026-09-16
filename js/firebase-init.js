@@ -7,13 +7,16 @@ import {
   collection,
   addDoc,
   setDoc,
+  getDocs,
   onSnapshot,
   doc,
   updateDoc,
   deleteDoc,
   query,
+  where,
   orderBy,
-  serverTimestamp
+  serverTimestamp,
+  runTransaction
 } from 'https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js';
 import {
   getAuth,
@@ -41,13 +44,16 @@ export {
   collection,
   addDoc,
   setDoc,
+  getDocs,
   onSnapshot,
   doc,
   updateDoc,
   deleteDoc,
   query,
+  where,
   orderBy,
   serverTimestamp,
+  runTransaction,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
