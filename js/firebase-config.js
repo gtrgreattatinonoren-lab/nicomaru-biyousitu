@@ -14,12 +14,12 @@
 // ==========================================================================
 
 export const firebaseConfig = {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_PROJECT_ID.firebaseapp.com',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_PROJECT_ID.appspot.com',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId: 'YOUR_APP_ID'
+  apiKey: 'AIzaSyAZQEO3Kvs62kZ_r_BeZSLMJs6z5-no1bY',
+  authDomain: 'nicomaru-biyousitu.firebaseapp.com',
+  projectId: 'nicomaru-biyousitu',
+  storageBucket: 'nicomaru-biyousitu.firebasestorage.app',
+  messagingSenderId: '746404690088',
+  appId: '1:746404690088:web:59a37f7ba6d57b14816a9d'
 };
 
 // firebaseConfigがまだ書き換えられていない(初期状態の)場合はtrueを返します。
