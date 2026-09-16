@@ -283,9 +283,9 @@
   cursor: pointer;
   color: var(--charcoal);
 }
-.modal-content h3{ font-size: 17px; color: var(--charcoal); margin: 0 0 12px; }
-.modal-content p{ font-size: 13.5px; margin: 6px 0; }
-.modal-content a{ color: var(--red); font-weight: 700; }
+#modalContent h3{ font-size: 17px; color: var(--charcoal); margin: 0 0 12px; }
+#modalContent p{ font-size: 13.5px; margin: 6px 0; }
+#modalContent a{ color: var(--red); font-weight: 700; }
 .modal-category-badge{
   display: inline-block;
   font-size: 11px;
