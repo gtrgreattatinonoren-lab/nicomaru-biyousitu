@@ -7,7 +7,7 @@ echo PyInstallerをインストールしています...
 python -m pip install --upgrade pyinstaller
 
 echo .exeファイルを作成しています...
-python -m PyInstaller --onefile --noconsole --name "にこまる美容室カルテ" app.py
+python -m PyInstaller --onefile --noconsole --icon "app_icon.ico" --add-data "app_icon.ico;." --name "にこまる美容室カルテ" app.py
 
 echo.
 echo 完了しました。dist フォルダの中に「にこまる美容室カルテ.exe」ができています。

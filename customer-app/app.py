@@ -9,12 +9,26 @@
 
 import hashlib
 import os
+import sys
 import tkinter as tk
 from datetime import datetime
 from tkinter import ttk, messagebox, filedialog, simpledialog
 
 import config
 import db
+
+
+def resource_path(filename):
+    """アイコンなどの同梱ファイルの場所を返す(.exe化してもソースのままでも動くようにする)"""
+    base = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
+    return os.path.join(base, filename)
+
+
+def set_app_icon(root):
+    try:
+        root.iconbitmap(resource_path("app_icon.ico"))
+    except Exception:
+        pass  # Windows以外や、アイコンファイルが見つからない場合は無視してそのまま起動する
 
 PASSWORD_SALT = "nikomaru-biyoushitsu-karte-v1"
 
@@ -443,6 +457,7 @@ class MainWindow:
 def main():
     root = tk.Tk()
     root.withdraw()
+    set_app_icon(root)
 
     db_path = ensure_db_path()
     if not db_path:

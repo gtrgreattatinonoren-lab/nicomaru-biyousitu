@@ -57,11 +57,16 @@ CREATE TABLE IF NOT EXISTS settings (
 
 
 def get_connection(db_path):
-    """DBファイルへの接続を作る(複数台のPCが同時に開いてもロック待ちで壊れにくいようWALモードにする)"""
+    """DBファイルへの接続を作る。
+
+    WALモードはSQLite公式が「ネットワーク越しの共有フォルダでは使わないこと
+    (壊れる可能性がある)」と明言しているため、あえて使わず既定のジャーナル
+    モードのままにしている。timeoutは、他のPCが書き込み中でロックされていた
+    場合に最大10秒まで待ってから再試行する設定。
+    """
     conn = sqlite3.connect(db_path, timeout=10)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
-    conn.execute("PRAGMA journal_mode = WAL")
     return conn
 
 
