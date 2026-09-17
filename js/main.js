@@ -265,6 +265,31 @@
     });
   }
 
+  // BGM再生ボタン(ブラウザの自動再生制限があるため、ボタンを押したときだけ再生する)
+  var bgmAudio = document.getElementById('bgmAudio');
+  var bgmToggle = document.getElementById('bgmToggle');
+  if (bgmAudio && bgmToggle) {
+    bgmToggle.addEventListener('click', function () {
+      if (bgmAudio.paused) {
+        bgmAudio.play().catch(function () {
+          // 再生に失敗した場合(対応していないブラウザなど)は何もしない
+        });
+      } else {
+        bgmAudio.pause();
+      }
+    });
+    bgmAudio.addEventListener('play', function () {
+      bgmToggle.classList.add('is-playing');
+      bgmToggle.setAttribute('aria-pressed', 'true');
+      bgmToggle.setAttribute('aria-label', '音楽を停止する');
+    });
+    bgmAudio.addEventListener('pause', function () {
+      bgmToggle.classList.remove('is-playing');
+      bgmToggle.setAttribute('aria-pressed', 'false');
+      bgmToggle.setAttribute('aria-label', '音楽を再生する');
+    });
+  }
+
   // フッターの年号を自動更新
   var yearEl = document.getElementById('year');
   if (yearEl) {
