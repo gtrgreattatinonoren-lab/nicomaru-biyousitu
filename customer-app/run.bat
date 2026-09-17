@@ -1,17 +1,19 @@
 @echo off
-rem にこまる美容室カルテアプリを起動します(ダブルクリックで実行)
-rem ※ この黒い画面(コンソール)はアプリの裏側の状態を表示するためのものです。
-rem    閉じずに、アプリの画面と一緒にそのままにしておいてください。
+rem Launches the Nikomaru Salon customer app (double-click to run).
+rem NOTE: This window is written in English on purpose. Japanese text in a
+rem .bat file can be misread by Windows depending on the system's language
+rem settings, which can make the window close instantly without showing an
+rem error. The app itself (the window that opens) is in Japanese as normal.
 cd /d "%~dp0"
 
-echo にこまる美容室カルテを起動しています...
-echo (この画面を閉じるとアプリも終了します)
+echo Starting Nikomaru Salon Customer App...
+echo (Keep this window open. Closing it will close the app too.)
 echo.
 
 where python >nul 2>nul
 if not %errorlevel%==0 (
-    echo [エラー] Pythonが見つかりませんでした。
-    echo README.md の「1. Pythonをインストールする」を確認してください。
+    echo [ERROR] Python was not found.
+    echo Please check step 1 of README.md (installing Python).
     echo.
     pause
     exit /b 1
@@ -22,9 +24,10 @@ set EXITCODE=%errorlevel%
 
 echo.
 if not %EXITCODE%==0 (
-    echo アプリが予期せず終了しました。(終了コード: %EXITCODE%)
-    echo 上に表示されているエラー内容、または同じフォルダ内の error_log.txt の内容を教えてください。
+    echo The app closed with an error. ^(exit code: %EXITCODE%^)
+    echo Please check the message above, or the file error_log.txt in this folder,
+    echo and share its contents so the issue can be fixed.
 ) else (
-    echo アプリを終了しました。
+    echo The app was closed normally.
 )
 pause

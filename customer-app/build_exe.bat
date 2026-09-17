@@ -1,14 +1,16 @@
 @echo off
-rem このアプリをWindowsの.exeファイルに変換します。
-rem 実行にはPythonがインストールされている必要があります(README.md参照)。
+rem Builds a Windows .exe of this app. Run this ON YOUR WINDOWS PC.
+rem NOTE: This window is written in English on purpose (see run.bat for why).
 cd /d "%~dp0"
 
-echo PyInstallerをインストールしています...
+echo Installing PyInstaller...
 python -m pip install --upgrade pyinstaller
 
-echo .exeファイルを作成しています...
-python -m PyInstaller --onefile --noconsole --icon "app_icon.ico" --add-data "app_icon.ico;." --name "にこまる美容室カルテ" app.py
+echo Building the .exe file...
+python -m PyInstaller --onefile --noconsole --icon "app_icon.ico" --add-data "app_icon.ico;." --name "NikomaruSalonKarte" app.py
 
 echo.
-echo 完了しました。dist フォルダの中に「にこまる美容室カルテ.exe」ができています。
+echo Done. You will find NikomaruSalonKarte.exe inside the "dist" folder.
+echo (You can rename it to a Japanese name in Windows Explorer if you like -
+echo  that is safe to do, unlike editing this .bat file.)
 pause
