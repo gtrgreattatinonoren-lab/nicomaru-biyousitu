@@ -1,0 +1,12 @@
+# お客様の実データは絶対にGitへ入れない
+*.db
+*.db-wal
+*.db-shm
+*.csv
+
+# ビルド生成物
+build/
+dist/
+*.spec
+__pycache__/
+*.pyc
