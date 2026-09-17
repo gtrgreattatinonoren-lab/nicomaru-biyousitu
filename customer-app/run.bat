@@ -7,30 +7,18 @@ rem log file afterwards and see exactly what happened.
 cd /d "%~dp0"
 set LOGFILE=run_debug.log
 
-echo ==== %date% %time% ==== > "%LOGFILE%"
-echo Step 1: run.bat started. Folder: %cd% >> "%LOGFILE%"
+echo ==== run.bat started ==== > "%LOGFILE%"
+echo Folder: %cd% >> "%LOGFILE%"
 
 echo Starting Nikomaru Salon Customer App...
 echo (Keep this window open. Closing it will close the app too.)
+echo Log file: %LOGFILE%
 echo.
 
-where python >nul 2>>"%LOGFILE%"
-if not %errorlevel%==0 (
-    echo Step 2: python.exe was NOT found on PATH >> "%LOGFILE%"
-    echo [ERROR] Python was not found.
-    echo Please check step 1 of README.md (installing Python).
-    echo Details were saved to %LOGFILE%
-    echo.
-    pause
-    exit /b 1
-)
-echo Step 2: python.exe found >> "%LOGFILE%"
-python --version >> "%LOGFILE%" 2>&1
-
-echo Step 3: launching app.py >> "%LOGFILE%"
+echo About to run: python app.py >> "%LOGFILE%"
 python app.py >> "%LOGFILE%" 2>&1
 set EXITCODE=%errorlevel%
-echo Step 4: app.py exited with code %EXITCODE% >> "%LOGFILE%"
+echo app.py finished with exit code %EXITCODE% >> "%LOGFILE%"
 
 echo.
 if not %EXITCODE%==0 (
