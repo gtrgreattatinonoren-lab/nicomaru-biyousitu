@@ -4,6 +4,7 @@
 *.db-shm
 *.csv
 error_log.txt
+run_debug.log
 
 # ビルド生成物
 build/
