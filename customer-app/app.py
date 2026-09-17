@@ -473,5 +473,39 @@ def main():
     root.mainloop()
 
 
+def _show_crash_message(error_text):
+    """起動直後に予期しないエラーで落ちた場合、画面が一瞬で消えて原因が分からなくなるのを防ぐ。
+    エラー内容をファイルに書き出したうえで、可能であれば画面にも表示する。"""
+    log_path = resource_path("error_log.txt")
+    try:
+        with open(log_path, "w", encoding="utf-8") as f:
+            f.write(error_text)
+    except OSError:
+        log_path = None
+
+    message = "起動中にエラーが発生しました。\n\n" + error_text
+    if log_path:
+        message += "\n\nこの内容は次の場所にも保存されました:\n{0}".format(log_path)
+
+    try:
+        error_root = tk.Tk()
+        error_root.withdraw()
+        messagebox.showerror("起動エラー", message)
+        error_root.destroy()
+    except Exception:
+        # tkinter自体が使えない(例: tkinterが正しくインストールされていない)場合は
+        # コンソールに表示する。run.batから起動していれば、この文字が読めるはず。
+        print(message)
+        try:
+            input("Enterキーを押すと閉じます...")
+        except Exception:
+            pass
+
+
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except Exception:
+        import traceback
+
+        _show_crash_message(traceback.format_exc())

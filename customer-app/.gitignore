@@ -3,6 +3,7 @@
 *.db-wal
 *.db-shm
 *.csv
+error_log.txt
 
 # ビルド生成物
 build/
