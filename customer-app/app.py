@@ -16,6 +16,7 @@ from tkinter import ttk, messagebox, filedialog, simpledialog
 
 import config
 import db
+import theme
 
 
 def resource_path(filename):
@@ -141,6 +142,7 @@ class VisitDialog(tk.Toplevel):
     def __init__(self, parent, initial=None):
         super().__init__(parent)
         self.title("来店履歴")
+        self.configure(bg=theme.CREAM_LIGHT)
         self.result = None
         self.transient(parent)
         self.grab_set()
@@ -162,11 +164,12 @@ class VisitDialog(tk.Toplevel):
         self.memo_text = tk.Text(self, width=30, height=4)
         self.memo_text.insert("1.0", initial.get("memo", ""))
         self.memo_text.grid(row=3, column=1, padx=8, pady=4)
+        theme.style_text_widget(self.memo_text)
 
         btn_frame = ttk.Frame(self)
         btn_frame.grid(row=4, column=0, columnspan=2, pady=8)
-        ttk.Button(btn_frame, text="保存", command=self._on_save).pack(side="left", padx=4)
-        ttk.Button(btn_frame, text="キャンセル", command=self.destroy).pack(side="left", padx=4)
+        ttk.Button(btn_frame, text="保存", style="Primary.TButton", command=self._on_save).pack(side="left", padx=4)
+        ttk.Button(btn_frame, text="キャンセル", style="Outline.TButton", command=self.destroy).pack(side="left", padx=4)
 
     def _on_save(self):
         if not self.date_var.get().strip():
@@ -214,8 +217,10 @@ class MainWindow:
         outer.pack(fill="both", expand=True)
 
         # 左側: 検索 + 顧客一覧
-        left = ttk.Frame(outer, width=300)
-        left.pack(side="left", fill="y", padx=(0, 8))
+        left = ttk.Frame(outer, width=300, padding=(0, 0, 10, 0))
+        left.pack(side="left", fill="y")
+
+        ttk.Label(left, text="お客様一覧", style="Heading.TLabel").pack(anchor="w", pady=(0, 8))
 
         search_frame = ttk.Frame(left)
         search_frame.pack(fill="x", pady=(0, 6))
@@ -234,7 +239,7 @@ class MainWindow:
         self.tree.pack(fill="both", expand=True)
         self.tree.bind("<<TreeviewSelect>>", self._on_select_customer)
 
-        ttk.Button(left, text="＋ 新規顧客", command=self.new_customer).pack(fill="x", pady=(6, 0))
+        ttk.Button(left, text="＋ 新規顧客", style="Primary.TButton", command=self.new_customer).pack(fill="x", pady=(6, 0))
 
         # 右側: タブ + 保存ボタン
         right = ttk.Frame(outer)
@@ -250,8 +255,8 @@ class MainWindow:
 
         bottom = ttk.Frame(right)
         bottom.pack(fill="x", pady=8)
-        ttk.Button(bottom, text="保存", command=self.save_customer).pack(side="left", padx=4)
-        ttk.Button(bottom, text="このお客様を削除", command=self.delete_customer).pack(side="left", padx=4)
+        ttk.Button(bottom, text="保存", style="Primary.TButton", command=self.save_customer).pack(side="left", padx=4)
+        ttk.Button(bottom, text="このお客様を削除", style="Danger.TButton", command=self.delete_customer).pack(side="left", padx=4)
         self.status_var = tk.StringVar(value="")
         ttk.Label(bottom, textvariable=self.status_var).pack(side="left", padx=12)
 
@@ -276,6 +281,7 @@ class MainWindow:
             ttk.Label(tab, text=label).grid(row=i * 2, column=0, sticky="w", pady=(6, 0))
             text = tk.Text(tab, width=60, height=3)
             text.grid(row=i * 2 + 1, column=0, sticky="w", pady=(0, 6))
+            theme.style_text_widget(text)
             self.karte_texts[key] = text
 
     def _build_memo_tab(self):
@@ -296,6 +302,7 @@ class MainWindow:
         ttk.Label(tab, text="自由メモ(その他なんでも)").grid(row=len(MEMO_FIELDS) + 1, column=0, sticky="nw", pady=(10, 0))
         self.memo_free_text = tk.Text(tab, width=60, height=6)
         self.memo_free_text.grid(row=len(MEMO_FIELDS) + 2, column=0, columnspan=2, sticky="w", pady=4)
+        theme.style_text_widget(self.memo_free_text)
 
     def _build_visits_tab(self):
         tab = ttk.Frame(self.notebook, padding=10)
@@ -314,9 +321,9 @@ class MainWindow:
 
         btns = ttk.Frame(tab)
         btns.pack(fill="x", pady=6)
-        ttk.Button(btns, text="追加", command=self.add_visit).pack(side="left", padx=4)
-        ttk.Button(btns, text="編集", command=self.edit_visit).pack(side="left", padx=4)
-        ttk.Button(btns, text="削除", command=self.delete_visit).pack(side="left", padx=4)
+        ttk.Button(btns, text="追加", style="Primary.TButton", command=self.add_visit).pack(side="left", padx=4)
+        ttk.Button(btns, text="編集", style="Outline.TButton", command=self.edit_visit).pack(side="left", padx=4)
+        ttk.Button(btns, text="削除", style="Danger.TButton", command=self.delete_visit).pack(side="left", padx=4)
 
     # ---------- データの読み書き ----------
     def refresh_customer_list(self):
@@ -458,6 +465,7 @@ def main():
     root = tk.Tk()
     root.withdraw()
     set_app_icon(root)
+    theme.apply_theme(root)
 
     db_path = ensure_db_path()
     if not db_path:
