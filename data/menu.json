@@ -2,31 +2,31 @@
   {
     "category": "カット",
     "name": "カット(シャンプー・ブロー込み)",
-    "price": "3800",
+    "price": "2500",
     "note": ""
   },
   {
     "category": "カット",
     "name": "学生カット",
-    "price": "2500",
+    "price": "2000",
     "note": "学生証提示"
   },
   {
     "category": "カット",
     "name": "キッズカット(小学生以下)",
-    "price": "2200",
+    "price": "2000",
     "note": ""
   },
   {
     "category": "カット",
     "name": "前髪カット",
-    "price": "1100",
+    "price": "1200",
     "note": ""
   },
   {
     "category": "カラー",
     "name": "フルカラー",
-    "price": "6600",
+    "price": "6500",
     "note": ""
   },
   {
@@ -38,49 +38,37 @@
   {
     "category": "カラー",
     "name": "ハイライト・グラデーション",
-    "price": "8800",
+    "price": "7500",
     "note": ""
   },
   {
     "category": "カラー",
     "name": "白髪染め",
-    "price": "6600",
+    "price": "5000",
     "note": ""
   },
   {
     "category": "パーマ",
     "name": "パーマ",
-    "price": "7700",
-    "note": ""
-  },
-  {
-    "category": "パーマ",
-    "name": "デジタルパーマ",
-    "price": "9900",
+    "price": "7000",
     "note": ""
   },
   {
     "category": "パーマ",
     "name": "縮毛矯正",
-    "price": "11000",
-    "note": ""
-  },
-  {
-    "category": "トリートメント",
-    "name": "ヘッドスパ",
-    "price": "3300",
+    "price": "12000",
     "note": ""
   },
   {
     "category": "トリートメント",
     "name": "選べるトリートメント",
-    "price": "2200",
+    "price": "2000",
     "note": ""
   },
   {
     "category": "トリートメント",
     "name": "縮毛矯正専用トリートメント",
-    "price": "3300",
+    "price": "2500",
     "note": ""
   }
 ]
