@@ -1,0 +1,4 @@
+# Claude Code の講座検索チェック(PCごとの記録なのでコミットしない)
+.claude/kyufu-check/last-run.txt
+.claude/kyufu-check/log.md
+.claude/settings.local.json
