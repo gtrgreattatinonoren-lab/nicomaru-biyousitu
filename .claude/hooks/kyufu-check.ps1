@@ -20,6 +20,9 @@ $log     = (Join-Path $dir 'log.md') -replace '\\', '/'
 $msg = "DAILY TASK (once per day, requested by the user): Before anything else, read $schools. " +
        "For each school listed there, search the MHLW course search system (https://www.kyufu.mhlw.go.jp/kensaku/) " +
        "for courses designated as Senmon Jissen Kyoiku Kunren (the specialized practical training benefit). " +
+       "The search is a form with a session, so a plain web fetch does not work: use the built-in browser, " +
+       "open https://www.kyufu.mhlw.go.jp/kensaku/SSR101Scr01S, type the school name into the free-word box, press the search button, " +
+       "and open each course's detail page for the designation number and period. Also search the word for beauty with prefecture Kagoshima to catch renamed schools. " +
        "Report in Japanese: school name, course name, course number, designation period, or 'not found'. " +
        "Compare with the last entry in $log (create it if missing) and say clearly whether anything changed. " +
        "Append today's result ($today) to $log. " +
