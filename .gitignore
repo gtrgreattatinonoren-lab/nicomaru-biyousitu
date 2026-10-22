@@ -2,3 +2,5 @@
 .claude/kyufu-check/last-run.txt
 .claude/kyufu-check/log.md
 .claude/settings.local.json
+.claude/kyufu-check/courses.json
+.claude/kyufu-check/user.json
